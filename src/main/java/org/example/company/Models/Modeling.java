@@ -2,6 +2,7 @@ package org.example.company.Models;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Modeling {
     private double capital;
@@ -16,15 +17,40 @@ public class Modeling {
     private int demandNowHeal;
 
     private int cntMouth;
+    private int nowMouth;
+
+    private int cntHappenHome;
+    private int cntHappenTransport;
+    private int cntHappenHeal;
+
+    private double pHappenHome;
+    private double pHappenTransport;
+    private double pHappenHeal;
+
+    private int cntHome;
+    private int cntTransport;
+    private int cntHeal;
 
     private double saleOfHome;
     private double saleOfTransport;
     private double saleOfHeal;
+
+    private boolean isRedefiningHome = false;
+    private boolean isRedefiningTransport = false;
+    private boolean isRedefiningHeal = false;
+
     public ArrayList<Contract> contracts = new ArrayList<>();
-    public ArrayList<Contract> contractsEnd = new ArrayList<>();
+    public HashMap<Contract, ContractType> contractsMap = new HashMap<>();
+
     public void addContact(Contract contract) {
         contracts.add(contract);
+        contractsMap.put(contract,contract.getType());
     }
+
+    public void setNowMouth(int mouth) {
+        this.nowMouth = mouth;
+    }
+
     public void setStartCapital(double startCapital) {
         this.startCapital = startCapital;
         capital += startCapital;
@@ -34,11 +60,12 @@ public class Modeling {
         this.saleOfTransport = saleOfTransport;
         this.saleOfHeal = saleOfHeal;
     }
+
     public void paymentToState() {
         capital -= (capital / 100) * 9;
     }
 
-    public void saleContact(Contract contract) {
+    public void saleContact(Contract contract) {        // Каждый месяц, год и 3 месяца
         double summ;
         if (contract.getType() == ContractType.HOME) {
             contract.setSaleOfContract(saleOfHome);
@@ -46,23 +73,82 @@ public class Modeling {
         } else if (contract.getType() == ContractType.TRANSPORT) {
             contract.setSaleOfContract(saleOfTransport);
             summ = saleOfTransport;
-        } else {
+        } else if (contract.getType() == ContractType.HEALHCARE) {
             contract.setSaleOfContract(saleOfHeal);
             summ = saleOfHeal;
+        } else {
+            return;
         }
         capital +=  summ;
     }
     public void paymentInsured(Contract contract) { // выплаты
+        if (isHappen(contract)) {
+            int franchise = contract.getTerms().getFranchise();
+            int damage = (int) (Math.random() * contract.getTerms().getMaxSummConpens());
+            int payment = damage - franchise;
+            capital -= payment;
+        }
+    }
 
+    public void isRedefiningUpdate() {
+        if (cntHome == 0) isRedefiningHome = true;
+        if (cntTransport == 0) isRedefiningTransport = true;
+        if (cntHeal == 0) isRedefiningHeal = true;
     }
-    public void redefiningCondition(Contract contract, int maxSummConpens,Data validityPeriod, Data dataRegistration, int franchise, ContributionType type) { // переопределние условий
-        TermsOfContract terms = new TermsOfContract(maxSummConpens,validityPeriod,dataRegistration, franchise, type);
-        contract.setTerms(terms);
+
+    public TermsOfContract redefiningCondition(int maxSummConpens,int validityPeriod, int mouthRegister, int franchise, ContributionType type) { // переопределние условий
+        return new TermsOfContract(maxSummConpens,validityPeriod, mouthRegister, franchise, type);
     }
-    public void endContractsAdd() { //месяц
+
+    public void genetateDataHappen() {
+        cntHappenHome = (int) (Math.random() * 25) + 1;
+        cntHappenTransport = (int) (Math.random() * 25) + 1;
+        cntHappenHeal = (int) (Math.random() * 25) + 1;
+        pHappenHome = Math.random();
+        pHappenTransport = Math.random();
+        pHappenHeal = Math.random();
+    }
+    public void updateCntContractTypes() {
+        for (Contract key : contractsMap.keySet()) {
+            if (contractsMap.get(key) == ContractType.HOME) {
+                cntHome++;
+            } else if (contractsMap.get(key) == ContractType.TRANSPORT) {
+                cntTransport++;
+            } else if (contractsMap.get(key) == ContractType.HEALHCARE) {
+                cntHeal++;
+            } else return;
+        }
+    }
+    public void deleteContracts() {
         for (Contract contract : contracts) {
-            // if () контракт истек
-            contractsEnd.add(contract);
+            if (nowMouth == contract.getTerms().getMouthOfEnd()) {
+                contracts.remove(contract);
+                contractsMap.remove(contract);
+            }
+        }
+    }
+
+    public boolean isHappen(Contract contract) {
+        if (contract.getType() == ContractType.HOME) {
+            if (Math.random() < pHappenHome && cntHappenHome > 0) {
+                cntHappenHome--;
+                return true;
+            }
+            return false;
+        }
+        else if (contract.getType() == ContractType.TRANSPORT) {
+            if (Math.random() < pHappenTransport && cntHappenTransport > 0) {
+                cntHappenTransport--;
+                return true;
+            }
+            return false;
+        }
+        else {
+            if (Math.random() < pHappenHeal && cntHappenHeal > 0) {
+                cntHappenHeal--;
+                return true;
+            }
+            return false;
         }
     }
 }

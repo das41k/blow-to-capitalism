@@ -1,6 +1,7 @@
 package org.example.company.Models;
 
 public class Contract {
+    private static int numbers = 0;
     private int number;
     private TermsOfContract terms;
     private double saleOfContract;
@@ -8,6 +9,7 @@ public class Contract {
 
     public Contract(ContractType type) {
         this.type = type;
+        this.number = ++numbers;
     }
 
     public ContractType getType() {
@@ -24,5 +26,8 @@ public class Contract {
 
     public void setSaleOfContract(double sale) {
         this.saleOfContract = sale;
+    }
+    public int getNumber() {
+        return number;
     }
 }

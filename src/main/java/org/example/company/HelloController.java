@@ -21,4 +21,5 @@ public class HelloController {
         countMounth.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(6,24,12));
         startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,30000));
     }
+
 }
