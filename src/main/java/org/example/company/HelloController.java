@@ -3,12 +3,10 @@ package org.example.company;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -73,7 +71,7 @@ public class HelloController {
     private ComboBox<ContributionType> typeContribHp;
 
     private boolean isSimulation = false;
-    private Modeling model;
+    private Modeling model = new Modeling();
     private int nowMonth = 0;
     @FXML
     public void initialize() {
@@ -122,20 +120,17 @@ public class HelloController {
     public void startWorkCompany(ActionEvent actionEvent) throws IOException { // запретить менять поля
         setDisable(true);
         CountedData();
-        ++nowMonth;
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("org/example/company/simulationWindow.fxml"));
-            Parent root = loader.load();
-            SimulationWindowController controller = new SimulationWindowController();
-            controller.countedData(startCapital.getValue(), nowMonth);
-            Stage stage = new Stage();
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.setTitle("Подождите, компания работает!");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        nowMonth++;
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/org/example/company/simulationWindow.fxml"));
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setTitle("Подождите, компания работает!");
+        SimulationWindowController controller = loader.getController();
+        controller.countedData(startCapital.getValue(), nowMonth);
+        stage.show();
+        ((Stage)((Node)actionEvent.getSource()).getScene().getWindow()).hide();
     }
 }

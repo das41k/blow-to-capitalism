@@ -4,16 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 public class SimulationWindowController {
     @FXML
-    private Label capital;
+    private Label capital = new Label();
     @FXML
-    private Label nowMonth;
+    private Label nowMonth = new Label();
     @FXML
     private Label timeSimulation;
-    @FXML
-    public void initialize() {
-    }
-    public void countedData(double capital, int month) {
-        this.capital.setText("");
-        this.nowMonth.setText("");
+    public void countedData(double capitalData, int month) {
+        capital.setText(String.valueOf(capitalData));
+        nowMonth.setText(String.valueOf(month));
     }
 }

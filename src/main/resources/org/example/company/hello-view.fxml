@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.company.HelloController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="617.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.company.HelloController">
    <children>
       <HBox layoutY="1.0" prefHeight="69.0" prefWidth="600.0">
          <children>
@@ -35,8 +35,7 @@
       <Spinner fx:id="demandHome" layoutX="48.0" layoutY="188.0" prefHeight="25.0" prefWidth="90.0" />
       <Spinner fx:id="demandCar" layoutX="222.0" layoutY="188.0" prefHeight="25.0" prefWidth="110.0" />
       <Spinner fx:id="demandHp" layoutX="391.0" layoutY="188.0" prefHeight="25.0" prefWidth="104.0" />
-      <Button layoutX="431.0" layoutY="361.0" mnemonicParsing="false" onAction="#startWorkCompany" text="Запустить симуляцию" />
-      <Button layoutX="427.0" layoutY="412.0" mnemonicParsing="false" text="Остановить симуляцию" />
+      <Button layoutX="415.0" layoutY="446.0" mnemonicParsing="false" onAction="#startWorkCompany" prefHeight="25.0" prefWidth="188.0" text="Нажмите чтобы продолжить" />
       <Label layoutX="24.0" layoutY="240.0" text="Вероятность страхования - жилье" />
       <Spinner fx:id="countMounth" layoutX="56.0" layoutY="98.0" prefHeight="25.0" prefWidth="90.0" />
       <Label layoutX="259.0" layoutY="240.0" prefHeight="17.0" prefWidth="120.0" text="Вероятность - авто" />
