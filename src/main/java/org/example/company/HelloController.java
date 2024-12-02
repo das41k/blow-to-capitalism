@@ -2,10 +2,21 @@ package org.example.company;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.example.company.Models.ContractType;
+import org.example.company.Models.ContributionType;
+import org.example.company.Models.Modeling;
+
+import java.io.IOException;
 
 public class HelloController {
     @FXML
@@ -48,9 +59,22 @@ public class HelloController {
     private Spinner<Integer> franchiseHp;
     @FXML
     private Spinner<Integer> periodHp;
+    @FXML
+    private Spinner<Double> saleContractHome;
+    @FXML
+    private Spinner<Double> saleContractCar;
+    @FXML
+    private Spinner<Double> saleContractHp;
+    @FXML
+    private ComboBox<ContributionType> typeContribHome;
+    @FXML
+    private ComboBox<ContributionType> typeContribCar;
+    @FXML
+    private ComboBox<ContributionType> typeContribHp;
 
     private boolean isSimulation = false;
-
+    private Modeling model;
+    private int nowMonth = 0;
     @FXML
     public void initialize() {
         countMounth.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(6,24,12));
@@ -70,9 +94,17 @@ public class HelloController {
         periodHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 6));
         periodCar.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 6, 3));
         periodHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 6, 4));
+        typeContribHome.getItems().addAll(ContributionType.values());
+        typeContribCar.getItems().addAll(ContributionType.values());
+        typeContribHp.getItems().addAll(ContributionType.values());
+        typeContribHome.setValue(ContributionType.MOUNTH);
+        typeContribCar.setValue(ContributionType.MOUNTH);
+        typeContribHp.setValue(ContributionType.MOUNTH);
+        saleContractHome.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(100, 10000, 300, 100));
+        saleContractCar.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(100, 15000, 500, 100));
+        saleContractHp.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(100, 7000, 100, 50));
     }
-
-    public void setDisable(boolean flag) {
+    private void setDisable(boolean flag) {
         countMounth.setDisable(flag);
         startCapital.setDisable(flag);
         accordionItemHome.setDisable(flag);
@@ -80,9 +112,30 @@ public class HelloController {
         accordionItemHp.setDisable(flag);
     }
 
-    // функция считывания данных и передачи в Modeling
+    private void CountedData() {
+        model.setStartCapital(startCapital.getValue());
+        model.setCntMouth(countMounth.getValue());
+        model.genetateDataHappen();
+        model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
+    }
 
-    public void startWorkCompany(ActionEvent actionEvent) { // запретить менять поля
+    public void startWorkCompany(ActionEvent actionEvent) throws IOException { // запретить менять поля
         setDisable(true);
+        CountedData();
+        ++nowMonth;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("org/example/company/simulationWindow.fxml"));
+            Parent root = loader.load();
+            SimulationWindowController controller = new SimulationWindowController();
+            controller.countedData(startCapital.getValue(), nowMonth);
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setTitle("Подождите, компания работает!");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

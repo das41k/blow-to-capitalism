@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="449.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.company.SimulationWindowController">
+   <children>
+      <Label layoutX="71.0" layoutY="27.0" text="Текущий капитал">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="capital" layoutX="106.0" layoutY="58.0" prefHeight="17.0" prefWidth="110.0" text="капитал" />
+      <Label layoutX="259.0" layoutY="27.0" text="Текущий месяц">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="nowMonth" layoutX="286.0" layoutY="58.0" text="месяц" />
+      <Label layoutX="430.0" layoutY="27.0" text="Время до окончания">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="timeSimulation" layoutX="481.0" layoutY="58.0" text="время" />
+      <Label layoutX="219.0" layoutY="124.0" text="Оказанные услуги">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <TableView layoutX="66.0" layoutY="165.0" prefHeight="200.0" prefWidth="495.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="C1" />
+          <TableColumn prefWidth="75.0" text="C2" />
+        </columns>
+      </TableView>
+      <Label layoutX="144.0" layoutY="107.0" text="ПРОДОЛЖЕНИЕ БУДЕТ ПРИ ОКОНЧАНИИ МЕСЯЦА" textFill="#f21d1d" />
+   </children>
+</AnchorPane>

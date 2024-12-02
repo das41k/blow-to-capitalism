@@ -31,7 +31,7 @@ public class Modeling {
     private int cntTransport;
     private int cntHeal;
 
-    private double saleOfHome;
+    private double saleOfHome; // добавить поле для стоимости в месяц//тип оплаты и т.д
     private double saleOfTransport;
     private double saleOfHeal;
 
@@ -46,7 +46,10 @@ public class Modeling {
         contracts.add(contract);
         contractsMap.put(contract,contract.getType());
     }
-
+    public void setCntMouth(int mouth) {
+        this.cntMouth = mouth;
+        nowMouth = mouth;
+    }
     public void setNowMouth(int mouth) {
         this.nowMouth = mouth;
     }
@@ -60,7 +63,11 @@ public class Modeling {
         this.saleOfTransport = saleOfTransport;
         this.saleOfHeal = saleOfHeal;
     }
-
+    public void setP(double pHome, double pCar, double pHeal) {
+        this.pHappenHome = pHome;
+        this.pHappenTransport = pCar;
+        this.pHappenHeal = pHeal;
+    }
     public void paymentToState() {
         capital -= (capital / 100) * 9;
     }
@@ -104,9 +111,6 @@ public class Modeling {
         cntHappenHome = (int) (Math.random() * 25) + 1;
         cntHappenTransport = (int) (Math.random() * 25) + 1;
         cntHappenHeal = (int) (Math.random() * 25) + 1;
-        pHappenHome = Math.random();
-        pHappenTransport = Math.random();
-        pHappenHeal = Math.random();
     }
     public void updateCntContractTypes() {
         for (Contract key : contractsMap.keySet()) {
