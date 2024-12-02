@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="619.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.company.HelloController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="600.0">
+      <HBox layoutY="1.0" prefHeight="69.0" prefWidth="600.0">
          <children>
             <Label prefHeight="17.0" prefWidth="351.0" text="Количество месяцев" />
             <Label prefHeight="17.0" prefWidth="144.0" text="Начальный капитан" />
@@ -21,8 +20,7 @@
             <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
          </padding>
       </HBox>
-      <Spinner fx:id="countMounth" layoutX="48.0" layoutY="93.0" prefHeight="25.0" prefWidth="90.0" />
-      <Spinner fx:id="startCapital" layoutX="394.0" layoutY="93.0" prefHeight="25.0" prefWidth="98.0" />
+      <Spinner fx:id="startCapital" layoutX="394.0" layoutY="95.0" prefHeight="25.0" prefWidth="98.0" />
       <HBox layoutY="139.0" prefHeight="44.0" prefWidth="600.0">
          <children>
             <Label prefHeight="17.0" prefWidth="195.0" text="Спрос на жилище" />
@@ -36,15 +34,69 @@
       <Spinner fx:id="demandHome" layoutX="48.0" layoutY="188.0" prefHeight="25.0" prefWidth="90.0" />
       <Spinner fx:id="demandCar" layoutX="222.0" layoutY="188.0" prefHeight="25.0" prefWidth="110.0" />
       <Spinner fx:id="demandHp" layoutX="391.0" layoutY="188.0" prefHeight="25.0" prefWidth="104.0" />
-      <Button layoutX="101.0" layoutY="250.0" mnemonicParsing="false" text="Запустить симуляцию" />
-      <Button layoutX="313.0" layoutY="250.0" mnemonicParsing="false" text="Остановить симуляцию" />
-      <Label layoutX="220.0" layoutY="320.0" text="Услуги оказанные за месяц" />
-      <TableView layoutX="40.0" layoutY="352.0" prefHeight="200.0" prefWidth="518.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
+      <Button onAction="#startWorkCompany" layoutX="431.0" layoutY="361.0" mnemonicParsing="false" text="Запустить симуляцию" />
+      <Button layoutX="427.0" layoutY="412.0" mnemonicParsing="false" text="Остановить симуляцию" />
+      <Label layoutX="24.0" layoutY="240.0" text="Вероятность страхования - жилье" />
+      <Spinner fx:id="countMounth" layoutX="56.0" layoutY="98.0" prefHeight="25.0" prefWidth="90.0" />
+      <Label layoutX="259.0" layoutY="240.0" prefHeight="17.0" prefWidth="120.0" text="Вероятность - авто" />
+      <Label layoutX="426.0" layoutY="240.0" text="Вероятность - здоровье" />
+      <Spinner fx:id="pHome" layoutX="71.0" layoutY="266.0" prefHeight="25.0" prefWidth="104.0" />
+      <Spinner fx:id="pCar" layoutX="264.0" layoutY="266.0" prefHeight="25.0" prefWidth="98.0" />
+      <Spinner fx:id="pHeal" layoutX="437.0" layoutY="266.0" prefHeight="25.0" prefWidth="110.0" />
+      <Accordion layoutX="36.0" layoutY="307.0" prefHeight="298.0" prefWidth="372.0">
+        <panes>
+          <TitledPane animated="false" text="Условия для страхования жилища">
+            <content>
+              <AnchorPane fx:id="accordionItemHome" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Spinner fx:id="conpensHome" layoutX="73.0" layoutY="37.0" prefHeight="25.0" prefWidth="81.0" />
+                        <Label layoutX="24.0" layoutY="14.0" text="Максимальная сумма конпенсации" />
+                        <Label layoutX="249.0" layoutY="14.0" text="Размер франшизы" />
+                        <Spinner fx:id="franchiseHome" layoutX="262.0" layoutY="37.0" prefHeight="25.0" prefWidth="81.0" />
+                        <Label layoutX="114.0" layoutY="82.0" text="Длительность в месяцах" />
+                        <Spinner fx:id="periodHome" layoutX="137.0" layoutY="109.0" prefHeight="25.0" prefWidth="98.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" text="Условия для страхования транспорта">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane fx:id="accordionItemCar" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Spinner fx:id="conpensCar" layoutX="73.0" layoutY="37.0" prefHeight="25.0" prefWidth="81.0" />
+                              <Label layoutX="24.0" layoutY="14.0" text="Максимальная сумма конпенсации" />
+                              <Label layoutX="249.0" layoutY="14.0" text="Размер франшизы" />
+                              <Spinner fx:id="franchiseCar" layoutX="262.0" layoutY="37.0" prefHeight="25.0" prefWidth="81.0" />
+                              <Label layoutX="114.0" layoutY="82.0" text="Длительность в месяцах" />
+                              <Spinner fx:id="periodCar" layoutX="137.0" layoutY="109.0" prefHeight="25.0" prefWidth="98.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" text="Условия для страхования здоровья">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane fx:id="accordionItemHp" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Spinner fx:id="conpensHp" layoutX="73.0" layoutY="37.0" prefHeight="25.0" prefWidth="81.0" />
+                              <Label layoutX="24.0" layoutY="14.0" text="Максимальная сумма конпенсации" />
+                              <Label layoutX="249.0" layoutY="14.0" text="Размер франшизы" />
+                              <Spinner fx:id="franchiseHp" layoutX="262.0" layoutY="37.0" prefHeight="25.0" prefWidth="81.0" />
+                              <Label layoutX="114.0" layoutY="82.0" text="Длительность в месяцах" />
+                              <Spinner fx:id="periodHp" layoutX="137.0" layoutY="109.0" prefHeight="25.0" prefWidth="98.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
    </children>
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
