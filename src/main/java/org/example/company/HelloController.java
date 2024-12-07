@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import org.example.company.Models.ContractType;
 import org.example.company.Models.ContributionType;
 import org.example.company.Models.Modeling;
+import org.example.company.Models.TermsOfContract;
 
 import java.io.IOException;
 
@@ -70,9 +71,14 @@ public class HelloController {
     @FXML
     private ComboBox<ContributionType> typeContribHp;
 
+    private TermsOfContract termsHome;
+    private TermsOfContract termsCar;
+    private TermsOfContract termsHp;
+
     private boolean isSimulation = false;
     private Modeling model = new Modeling();
     private int nowMonth = 0;
+
     @FXML
     public void initialize() {
         countMounth.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(6,24,12));
@@ -121,6 +127,7 @@ public class HelloController {
         setDisable(true);
         CountedData();
         nowMonth++;
+        model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/org/example/company/simulationWindow.fxml"));
         Parent root = loader.load();
@@ -129,8 +136,15 @@ public class HelloController {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setTitle("Подождите, компания работает!");
         SimulationWindowController controller = loader.getController();
-        controller.countedData(startCapital.getValue(), nowMonth);
+        setTermsOfContracts();
+        controller.countedData(startCapital.getValue(), nowMonth, model, termsHome, termsCar, termsHp);
         stage.show();
         ((Stage)((Node)actionEvent.getSource()).getScene().getWindow()).hide();
+    }
+
+    public void setTermsOfContracts() {
+        termsHome = new TermsOfContract(conpensHome.getValue(), periodHome.getValue(),nowMonth, franchiseHome.getValue(),typeContribHome.getValue());
+        termsCar = new TermsOfContract(conpensCar.getValue(), periodCar.getValue(),nowMonth, franchiseCar.getValue(),typeContribCar.getValue());
+        termsHp = new TermsOfContract(conpensHp.getValue(), periodHp.getValue(),nowMonth, franchiseHp.getValue(),typeContribHp.getValue());
     }
 }

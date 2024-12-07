@@ -2,7 +2,7 @@ package org.example.company.Models;
 
 public class Contract {
     private static int numbers = 0;
-    private int number;
+    private final int number;
     private TermsOfContract terms;
     private double saleOfContract;
     private ContractType type;
@@ -11,7 +11,6 @@ public class Contract {
         this.type = type;
         this.number = ++numbers;
     }
-
     public ContractType getType() {
         return type;
     }

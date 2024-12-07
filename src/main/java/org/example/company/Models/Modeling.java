@@ -42,9 +42,12 @@ public class Modeling {
     public ArrayList<Contract> contracts = new ArrayList<>();
     public HashMap<Contract, ContractType> contractsMap = new HashMap<>();
 
-    public void addContact(Contract contract) {
+    public void addContact(ContractType type, TermsOfContract terms) {
+        Contract contract = new Contract(type);
+        contract.setTerms(terms);
         contracts.add(contract);
-        contractsMap.put(contract,contract.getType());
+        contractsMap.put(contract,type);
+        System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + type + " длительность " + contract.getTerms().getMouthOfEnd());
     }
     public void setCntMouth(int mouth) {
         this.cntMouth = mouth;
@@ -68,6 +71,17 @@ public class Modeling {
         this.pHappenTransport = pCar;
         this.pHappenHeal = pHeal;
     }
+
+    public double getpHappenHeal() {
+        return pHappenHeal;
+    }
+    public double getpHappenHome() {
+        return pHappenHome;
+    }
+    public double getpHappenTransport() {
+        return pHappenTransport;
+    }
+
     public void paymentToState() {
         capital -= (capital / 100) * 9;
     }

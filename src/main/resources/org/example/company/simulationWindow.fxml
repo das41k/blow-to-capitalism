@@ -26,7 +26,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Label fx:id="timeSimulation" layoutX="481.0" layoutY="58.0" text="время" />
+      <Label fx:id="timeSimulation" layoutX="420.0" layoutY="58.0" text="время" />
       <Label layoutX="219.0" layoutY="124.0" text="Оказанные услуги">
          <font>
             <Font size="21.0" />
@@ -39,7 +39,7 @@
         </columns>
       </TableView>
       <Label layoutX="144.0" layoutY="107.0" text="ПРОДОЛЖЕНИЕ БУДЕТ ПРИ ОКОНЧАНИИ МЕСЯЦА" textFill="#f21d1d" />
-      <Button layoutX="44.0" layoutY="394.0" mnemonicParsing="false" text="Запустить симуляцию" />
-      <Button layoutX="391.0" layoutY="394.0" mnemonicParsing="false" text="Остановить симуляцию" />
+      <Button layoutX="44.0" layoutY="394.0" mnemonicParsing="false" onAction="#startSimulation" text="Запустить симуляцию" />
+      <Button layoutX="391.0" layoutY="394.0" mnemonicParsing="false" onAction="#stopSimulation" text="Остановить симуляцию" />
    </children>
 </AnchorPane>
