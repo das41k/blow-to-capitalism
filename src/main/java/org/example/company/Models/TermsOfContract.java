@@ -23,6 +23,9 @@ public class TermsOfContract {
         return franchise;
     }
 
+    public int getMonthRegister() {
+        return mouthRegister;
+    }
     public double calculateCost(double monthlyContribution) {
         switch (type) {
             case MOUNTH:

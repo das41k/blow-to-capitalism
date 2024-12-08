@@ -121,13 +121,13 @@ public class HelloController {
         model.setCntMouth(countMounth.getValue());
         model.genetateDataHappen();
         model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
+        model.setSaleOfContracts(saleContractHome.getValue(),saleContractCar.getValue(),saleContractHp.getValue());
     }
 
     public void startWorkCompany(ActionEvent actionEvent) throws IOException { // запретить менять поля
         setDisable(true);
         CountedData();
         nowMonth++;
-        model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/org/example/company/simulationWindow.fxml"));
         Parent root = loader.load();
@@ -145,6 +145,6 @@ public class HelloController {
     public void setTermsOfContracts() {
         termsHome = new TermsOfContract(conpensHome.getValue(), periodHome.getValue(),nowMonth, franchiseHome.getValue(),typeContribHome.getValue());
         termsCar = new TermsOfContract(conpensCar.getValue(), periodCar.getValue(),nowMonth, franchiseCar.getValue(),typeContribCar.getValue());
-        termsHp = new TermsOfContract(conpensHp.getValue(), periodHp.getValue(),nowMonth, franchiseHp.getValue(),typeContribHp.getValue());
+        termsHp = new TermsOfContract(conpensHp.getValue(), periodHp.getValue(), nowMonth, franchiseHp.getValue(),typeContribHp.getValue());
     }
 }

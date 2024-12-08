@@ -42,19 +42,22 @@ public class Modeling {
     public ArrayList<Contract> contracts = new ArrayList<>();
     public HashMap<Contract, ContractType> contractsMap = new HashMap<>();
 
+    public double getCapital() {
+        return capital;
+    }
+
     public void addContact(ContractType type, TermsOfContract terms) {
         Contract contract = new Contract(type);
         contract.setTerms(terms);
         contracts.add(contract);
         contractsMap.put(contract,type);
-        System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + type + " длительность " + contract.getTerms().getMouthOfEnd());
+        System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + type + " оканчивается в  " + contract.getTerms().getMouthOfEnd() + " месяце");
+        saleContact(contract);
+        System.out.println("Контракт с ID: " + contract.getNumber() + " был выплачен в этом месяце");
     }
     public void setCntMouth(int mouth) {
         this.cntMouth = mouth;
         nowMouth = mouth;
-    }
-    public void setNowMouth(int mouth) {
-        this.nowMouth = mouth;
     }
 
     public void setStartCapital(double startCapital) {
@@ -85,6 +88,16 @@ public class Modeling {
     public void paymentToState() {
         capital -= (capital / 100) * 9;
     }
+    public double getPaymentToState() {
+        return (capital / 100) * 9;
+    }
+    public void saleOfMonth() {
+        for (Contract contract : contracts) {
+            if (contract.getTerms().getMonthRegister() + contract.getTerms().getMouthOfEnd() <= nowMouth) {
+                saleContact(contract);
+            }
+        }
+    }
 
     public void saleContact(Contract contract) {        // Каждый месяц, год и 3 месяца
         double summ;
@@ -102,24 +115,40 @@ public class Modeling {
         }
         capital +=  summ;
     }
+    public void paymentContracts() {
+        for (Contract contract : contracts) {
+            paymentInsured(contract);
+        }
+    }
+
     public void paymentInsured(Contract contract) { // выплаты
         if (isHappen(contract)) {
             int franchise = contract.getTerms().getFranchise();
             int damage = (int) (Math.random() * contract.getTerms().getMaxSummConpens());
             int payment = damage - franchise;
             capital -= payment;
+            System.out.println("Компания оплатила ущерб по договору: " + contract.getNumber() + " на сумму " + payment);
         }
     }
 
-    public void isRedefiningUpdate() {
+    public void redefiningUpdate() {
         if (cntHome == 0) isRedefiningHome = true;
         if (cntTransport == 0) isRedefiningTransport = true;
         if (cntHeal == 0) isRedefiningHeal = true;
     }
 
-    public TermsOfContract redefiningCondition(int maxSummConpens,int validityPeriod, int mouthRegister, int franchise, ContributionType type) { // переопределние условий
-        return new TermsOfContract(maxSummConpens,validityPeriod, mouthRegister, franchise, type);
+    public boolean isRedefiningHeal() {
+        return isRedefiningHeal;
     }
+
+    public boolean isRedefiningHome() {
+        return isRedefiningHome;
+    }
+
+    public boolean isRedefiningTransport() {
+        return isRedefiningTransport;
+    }
+
 
     public void genetateDataHappen() {
         cntHappenHome = (int) (Math.random() * 25) + 1;
@@ -144,29 +173,31 @@ public class Modeling {
                 contractsMap.remove(contract);
             }
         }
+        updateCntContractTypes();
     }
 
     public boolean isHappen(Contract contract) {
         if (contract.getType() == ContractType.HOME) {
-            if (Math.random() < pHappenHome && cntHappenHome > 0) {
+            if (Math.random() <= pHappenHome && cntHappenHome > 0) {
                 cntHappenHome--;
                 return true;
             }
             return false;
         }
         else if (contract.getType() == ContractType.TRANSPORT) {
-            if (Math.random() < pHappenTransport && cntHappenTransport > 0) {
+            if (Math.random() <= pHappenTransport && cntHappenTransport > 0) {
                 cntHappenTransport--;
                 return true;
             }
             return false;
         }
-        else {
-            if (Math.random() < pHappenHeal && cntHappenHeal > 0) {
+        else if (contract.getType() == ContractType.HEALHCARE) {
+            if (Math.random() <= pHappenHeal && cntHappenHeal > 0) {
                 cntHappenHeal--;
                 return true;
             }
             return false;
         }
+        return false;
     }
 }
