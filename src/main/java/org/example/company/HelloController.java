@@ -115,29 +115,41 @@ public class HelloController {
         accordionItemCar.setDisable(flag);
         accordionItemHp.setDisable(flag);
     }
+    public void updateData(double capital, boolean isRedefiningHome, boolean isRedefiningCar, boolean isRedefiningHp) {
+        startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,capital, 100));
+        accordionItemHome.setDisable(!isRedefiningHome);
+        accordionItemCar.setDisable(!isRedefiningCar);
+        accordionItemHp.setDisable(!isRedefiningHp);
+    }
 
     private void CountedData() {
         model.setStartCapital(startCapital.getValue());
-        model.setCntMouth(countMounth.getValue());
+        model.setCntMouth(countMounth.getValue(), nowMonth);
         model.genetateDataHappen();
+        model.setDemand(demandHome.getValue(), demandCar.getValue(),demandHp.getValue());
         model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
         model.setSaleOfContracts(saleContractHome.getValue(),saleContractCar.getValue(),saleContractHp.getValue());
     }
 
     public void startWorkCompany(ActionEvent actionEvent) throws IOException { // запретить менять поля
         setDisable(true);
-        CountedData();
         nowMonth++;
+        CountedData();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/org/example/company/simulationWindow.fxml"));
         Parent root = loader.load();
         Stage stage = new Stage();
+        Stage simulationStage = new Stage();
         stage.setScene(new Scene(root));
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setTitle("Подождите, компания работает!");
         SimulationWindowController controller = loader.getController();
         setTermsOfContracts();
         controller.countedData(startCapital.getValue(), nowMonth, model, termsHome, termsCar, termsHp);
+        simulationStage.setOnHidden(event -> {
+            Stage primaryStage = HelloApplication.getPrimaryStage();
+            primaryStage.show(); // Показать главное окно
+        });
         stage.show();
         ((Stage)((Node)actionEvent.getSource()).getScene().getWindow()).hide();
     }

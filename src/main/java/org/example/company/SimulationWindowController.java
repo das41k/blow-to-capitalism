@@ -4,8 +4,10 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.company.Models.ContractType;
 import org.example.company.Models.Modeling;
@@ -24,7 +26,7 @@ public class SimulationWindowController {
     private TermsOfContract termsHp;
 
     private boolean isSimulationRunning = false;
-    private boolean flagMonth = false;
+    private boolean flagMonth = true;
     private long elapsedTime = 0;
     private Timeline simulationTimer;
     private Modeling model;
@@ -54,35 +56,41 @@ public class SimulationWindowController {
     @FXML
     private void startSimulation() {
         if (isSimulationRunning) return;
-        if (!flagMonth) model.saleOfMonth();
+        if (flagMonth) model.saleOfMonth();
         capital.setText(String.valueOf(model.getCapital()));
         timer = new AnimationTimer() {
             private long lastUpdateHome= 0;
             private long lastUpdateCar = 0;
             private long lastUpdateHp = 0;
+            int cntClientHome = 0;
+            int cntClientCar = 0;
+            int cntClientHp = 0;
             double pHome = model.getpHappenHome();
             double pCar = model.getpHappenTransport();
             double pHeal = model.getpHappenHeal();
             @Override
             public void handle(long now) {
                 if (now - lastUpdateHome >= period * 1_000_000_000L) {
-                    if (Math.random() <= pHome) {
+                    if (Math.random() <= pHome && cntClientHome < model.getDemandHome()) {
                         model.addContact(ContractType.HOME, termsHome);
                         capital.setText(String.valueOf(model.getCapital()));
+                        cntClientHome++;
                     }
                     lastUpdateHome = now;
                 }
                 if (now - lastUpdateCar >= period * 1_000_000_000L) {
-                    if (Math.random() <= pCar) {
+                    if (Math.random() <= pCar && cntClientCar < model.getDemandTransport()) {
                         model.addContact(ContractType.TRANSPORT, termsCar);
                         capital.setText(String.valueOf(model.getCapital()));
+                        cntClientCar++;
                     }
                     lastUpdateCar = now;
                 }
                 if (now - lastUpdateHp >= period * 1_000_000_000L) {
-                    if (Math.random() <= pHeal) {
+                    if (Math.random() <= pHeal && cntClientHp < model.getDemandHeal()) {
                         model.addContact(ContractType.HEALHCARE, termsHp);
                         capital.setText(String.valueOf(model.getCapital()));
+                        cntClientHp++;
                     }
                     lastUpdateHp = now;
                 }
@@ -96,16 +104,15 @@ public class SimulationWindowController {
     @FXML
     private void stopSimulation() {
         if (!isSimulationRunning) return;
-        flagMonth = true;
+        flagMonth = false;
         simulationTimer.pause();
         simulationTimer = null;
         timer.stop();
         isSimulationRunning = false;
-        System.out.println("Симуляция приостанвлена!");
+        System.out.println("Симуляция приостановлена!");
     }
 
     private void startSimulationTimer() {
-        System.out.println("Симуляция запущена!");
         if (!isSimulationRunning) return;
         simulationTimer = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             elapsedTime++;
@@ -118,7 +125,7 @@ public class SimulationWindowController {
                 timer.start();
                 isSimulationRunning = true;
             }
-            if (elapsedTime == 40)  {
+            if (elapsedTime == 20)  {
                 elapsedTime = 0;
                 isSimulationRunning = false;
                 simulationTimer.stop();
@@ -126,7 +133,7 @@ public class SimulationWindowController {
                 simulationTimer = null;
                 model.paymentToState();
                 capital.setText(String.valueOf(model.getCapital()));
-                model.deleteContracts();
+                model.updateCntContractTypes();
                 model.redefiningUpdate();
                 resultSimulation();
             }
@@ -139,7 +146,34 @@ public class SimulationWindowController {
         Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
         alertResults.setHeaderText("Результаты симуляции");
         alertResults.setContentText("Выплата государству составила: " + paymentToState +"\n" + "Текущий капитал: " + capital.getText());
+        alertResults.setOnCloseRequest(event -> {
+            continuationWork();
+        });
         alertResults.show();
     }
+    private void continuationWork() {
+        if (model.isRedefiningHome() || model.isRedefiningHeal() || model.isRedefiningTransport()) {
+            Stage stage = (Stage) capital.getScene().getWindow();
+            stage.close();
+            Stage primaryStage = HelloApplication.getPrimaryStage(); // Получаем ссылку на главное окно
+            HelloController mainController = HelloApplication.getMainController();
 
+            // Передаем значения в главное окно
+            mainController.updateData(
+                    model.getCapital(),
+                    model.isRedefiningHome(),
+                    model.isRedefiningTransport(),
+                    model.isRedefiningHeal()
+            );
+            model.setRedefining();
+            primaryStage.show();
+        } else {
+            int mouth = Integer.parseInt(nowMonth.getText()) + 1;
+            nowMonth.setText(String.valueOf(mouth));
+            model.setNowMouth(mouth);
+            termsHome.setMouthRegister(mouth);
+            termsCar.setMouthRegister(mouth);
+            termsHp.setMouthRegister(mouth);
+        }
+    }
 }

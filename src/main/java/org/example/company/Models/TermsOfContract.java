@@ -16,6 +16,14 @@ public class TermsOfContract {
         this.type = type;
     }
 
+    public TermsOfContract(TermsOfContract original) {
+        this.maxSummConpens = original.maxSummConpens;
+        this.validityPeriod = original.validityPeriod;
+        this.mouthRegister = original.mouthRegister;
+        this.franchise = original.franchise;
+        this.type= original.type;
+    }
+
     public int getMaxSummConpens() {
         return maxSummConpens;
     }
@@ -40,5 +48,13 @@ public class TermsOfContract {
     }
     public int getMouthOfEnd() {
         return (mouthRegister + validityPeriod);
+    }
+
+    public ContributionType getType() {
+        return type;
+    }
+
+    public void setMouthRegister(int mouthRegister) {
+        this.mouthRegister = mouthRegister;
     }
 }

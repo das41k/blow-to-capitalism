@@ -3,6 +3,7 @@ package org.example.company.Models;
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Modeling {
     private double capital;
@@ -11,10 +12,6 @@ public class Modeling {
     private int demandHome;
     private int demandTransport;
     private int demandHeal;
-
-    private int demandNowHome;
-    private int demandNowTransport;
-    private int demandNowHeal;
 
     private int cntMouth;
     private int nowMouth;
@@ -48,22 +45,44 @@ public class Modeling {
 
     public void addContact(ContractType type, TermsOfContract terms) {
         Contract contract = new Contract(type);
-        contract.setTerms(terms);
+        TermsOfContract newTerms = new TermsOfContract(terms);
+        contract.setTerms(newTerms);
         contracts.add(contract);
         contractsMap.put(contract,type);
         System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + type + " оканчивается в  " + contract.getTerms().getMouthOfEnd() + " месяце");
         saleContact(contract);
-        System.out.println("Контракт с ID: " + contract.getNumber() + " был выплачен в этом месяце");
+        System.out.println("Контракт с ID: " + contract.getNumber() + " был оплачен в этом месяце");
     }
-    public void setCntMouth(int mouth) {
+    public void setCntMouth(int mouth, int nowMouth) {
         this.cntMouth = mouth;
-        nowMouth = mouth;
+        this.nowMouth = nowMouth;
     }
-
+    public void setNowMouth(int nowMouth) {
+        this.nowMouth = nowMouth;
+    }
     public void setStartCapital(double startCapital) {
         this.startCapital = startCapital;
         capital += startCapital;
     }
+
+    public void setDemand(int demandHome, int demandTransport, int demandHeal) {
+        this.demandHome = demandHome;
+        this.demandTransport = demandTransport;
+        this.demandHeal = demandHeal;
+    }
+
+    public int getDemandHome() {
+        return demandHome;
+    }
+
+    public int getDemandTransport() {
+        return demandTransport;
+    }
+
+    public int getDemandHeal() {
+        return demandHeal;
+    }
+
     public void setSaleOfContracts(double saleOfHome, double saleOfTransport, double saleOfHeal) {
         this.saleOfHome = saleOfHome;
         this.saleOfTransport = saleOfTransport;
@@ -92,14 +111,46 @@ public class Modeling {
         return (capital / 100) * 9;
     }
     public void saleOfMonth() {
-        for (Contract contract : contracts) {
-            if (contract.getTerms().getMonthRegister() + contract.getTerms().getMouthOfEnd() <= nowMouth) {
-                saleContact(contract);
+        Iterator<Contract> iterator = contracts.iterator();
+        while (iterator.hasNext()) {
+            Contract contract = iterator.next();
+            if (contract.getTerms().getType() == ContributionType.MOUNTH) {
+                if (contract.getTerms().getMouthOfEnd() > nowMouth) {
+                    saleContact(contract);
+                    System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " был оплачен в этом месяце");
+                } else if (contract.getTerms().getMouthOfEnd() <= nowMouth) {
+                    saleContact(contract);
+                    System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
+                    iterator.remove();
+                    contractsMap.remove(contract);
+                }
+            }
+            else if (contract.getTerms().getType() == ContributionType.QUARTERLY) {
+                if (contract.getTerms().getMouthOfEnd() > nowMouth && nowMouth % 3 == 0) {
+                    saleContact(contract);
+                    System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " был оплачен в этом месяце");
+                } else if (contract.getTerms().getMouthOfEnd() <= nowMouth) {
+                    saleContact(contract);
+                    System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
+                    iterator.remove();
+                    contractsMap.remove(contract);
+                }
+            }
+            else if (contract.getTerms().getType() == ContributionType.YEAR) {
+                if (contract.getTerms().getMouthOfEnd() > nowMouth && nowMouth % 12 == 0) {
+                    saleContact(contract);
+                    System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " был оплачен в этом месяце");
+                } else if (contract.getTerms().getMouthOfEnd() <= nowMouth) {
+                    saleContact(contract);
+                    System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
+                    iterator.remove();
+                    contractsMap.remove(contract);
+                }
             }
         }
     }
 
-    public void saleContact(Contract contract) {        // Каждый месяц, год и 3 месяца
+    private void saleContact(Contract contract) {        // Каждый месяц, год и 3 месяца
         double summ;
         if (contract.getType() == ContractType.HOME) {
             contract.setSaleOfContract(saleOfHome);
@@ -137,6 +188,11 @@ public class Modeling {
         if (cntHeal == 0) isRedefiningHeal = true;
     }
 
+    public void setRedefining() {
+        isRedefiningHome = false;
+        isRedefiningTransport = false;
+        isRedefiningHeal = false;
+    }
     public boolean isRedefiningHeal() {
         return isRedefiningHeal;
     }
@@ -166,14 +222,9 @@ public class Modeling {
             } else return;
         }
     }
-    public void deleteContracts() {
-        for (Contract contract : contracts) {
-            if (nowMouth == contract.getTerms().getMouthOfEnd()) {
-                contracts.remove(contract);
-                contractsMap.remove(contract);
-            }
-        }
-        updateCntContractTypes();
+    public void deleteContracts(Contract contract) {
+        contracts.remove(contract);
+        contractsMap.remove(contract);
     }
 
     public boolean isHappen(Contract contract) {
