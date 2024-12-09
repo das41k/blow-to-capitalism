@@ -26,6 +26,11 @@ public class Contract {
     public void setSaleOfContract(double sale) {
         this.saleOfContract = sale;
     }
+
+    public double getSaleOfContract() {
+        return saleOfContract;
+    }
+
     public int getNumber() {
         return number;
     }

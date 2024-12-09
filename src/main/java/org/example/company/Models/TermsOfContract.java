@@ -49,7 +49,9 @@ public class TermsOfContract {
     public int getMouthOfEnd() {
         return (mouthRegister + validityPeriod);
     }
-
+    public int getPeriod(int nowMonth) {
+        return (mouthRegister + validityPeriod) - nowMonth;
+    }
     public ContributionType getType() {
         return type;
     }

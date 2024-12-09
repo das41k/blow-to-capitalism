@@ -3,6 +3,7 @@ package org.example.company;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -151,8 +152,27 @@ public class SimulationWindowController {
         });
         alertResults.show();
     }
+
+    private void stopWorkProgram(String reason) {
+        Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
+        alertResults.setHeaderText("Компания завершила работу!");
+        alertResults.setContentText("Причина: " + reason);
+        alertResults.setOnCloseRequest(event -> {
+            Platform.exit(); // Закрыть приложение корректно
+            System.exit(0);
+        });
+        alertResults.showAndWait();
+    }
+
     private void continuationWork() {
-        if (model.isRedefiningHome() || model.isRedefiningHeal() || model.isRedefiningTransport()) {
+        if (model.getNowMouth() == model.getCntMouth()) {
+            String reason = "закончился срок работы, были отработаны все месяцы!";
+            stopWorkProgram(reason);
+            return;
+        }
+        model.refreshDemand();
+        if (model.isRedefiningHome() || model.isRedefiningHeal() || model.isRedefiningTransport()
+                || model.getDemandHeal() == 0 || model.getDemandHome() == 0 || model.getDemandTransport() == 0 ) {
             Stage stage = (Stage) capital.getScene().getWindow();
             stage.close();
             Stage primaryStage = HelloApplication.getPrimaryStage(); // Получаем ссылку на главное окно
@@ -163,7 +183,10 @@ public class SimulationWindowController {
                     model.getCapital(),
                     model.isRedefiningHome(),
                     model.isRedefiningTransport(),
-                    model.isRedefiningHeal()
+                    model.isRedefiningHeal(),
+                    model.getDemandHome(),
+                    model.getDemandTransport(),
+                    model.getDemandHeal()
             );
             model.setRedefining();
             primaryStage.show();

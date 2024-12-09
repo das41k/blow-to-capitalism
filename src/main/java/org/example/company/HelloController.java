@@ -81,7 +81,7 @@ public class HelloController {
 
     @FXML
     public void initialize() {
-        countMounth.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(6,24,12));
+        countMounth.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2,24,12));
         startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,30000, 100));
         demandHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,25,15));
         demandCar.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,25,13));
@@ -115,11 +115,14 @@ public class HelloController {
         accordionItemCar.setDisable(flag);
         accordionItemHp.setDisable(flag);
     }
-    public void updateData(double capital, boolean isRedefiningHome, boolean isRedefiningCar, boolean isRedefiningHp) {
+    public void updateData(double capital, boolean isRedefiningHome, boolean isRedefiningCar, boolean isRedefiningHp, int demandHome, int demandCar, int demandHp) {
         startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,capital, 100));
         accordionItemHome.setDisable(!isRedefiningHome);
         accordionItemCar.setDisable(!isRedefiningCar);
         accordionItemHp.setDisable(!isRedefiningHp);
+        this.demandHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,25,demandHome));
+        this.demandCar.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,25,demandCar));
+        this.demandHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,25,demandHp));
     }
 
     private void CountedData() {

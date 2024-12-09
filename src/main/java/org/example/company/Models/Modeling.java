@@ -28,7 +28,11 @@ public class Modeling {
     private int cntTransport;
     private int cntHeal;
 
-    private double saleOfHome; // добавить поле для стоимости в месяц//тип оплаты и т.д
+    private double costHome;
+    private double costCar;
+    private  double costHp;
+
+    private double saleOfHome;
     private double saleOfTransport;
     private double saleOfHeal;
 
@@ -57,9 +61,17 @@ public class Modeling {
         this.cntMouth = mouth;
         this.nowMouth = nowMouth;
     }
+    public int getCntMouth() {
+        return cntMouth;
+    }
     public void setNowMouth(int nowMouth) {
         this.nowMouth = nowMouth;
     }
+
+    public int getNowMouth() {
+        return nowMouth;
+    }
+
     public void setStartCapital(double startCapital) {
         this.startCapital = startCapital;
         capital += startCapital;
@@ -174,11 +186,14 @@ public class Modeling {
 
     public void paymentInsured(Contract contract) { // выплаты
         if (isHappen(contract)) {
-            int franchise = contract.getTerms().getFranchise();
-            int damage = (int) (Math.random() * contract.getTerms().getMaxSummConpens());
-            int payment = damage - franchise;
-            capital -= payment;
-            System.out.println("Компания оплатила ущерб по договору: " + contract.getNumber() + " на сумму " + payment);
+            double k = Math.random() + Double.MIN_VALUE;
+            while (k == 0) k = Math.random() + Double.MIN_VALUE;
+            if (k > 1.0) k = 1.0;
+            double payment = contract.getTerms().getMaxSummConpens() * k;
+            if (contract.getTerms().getFranchise() <= payment) {
+                capital -= payment;
+                System.out.println("Компания оплатила ущерб по договору: " + contract.getNumber() + " на сумму " + payment);
+            }
         }
     }
 
@@ -219,7 +234,7 @@ public class Modeling {
                 cntTransport++;
             } else if (contractsMap.get(key) == ContractType.HEALHCARE) {
                 cntHeal++;
-            } else return;
+            }
         }
     }
     public void deleteContracts(Contract contract) {
@@ -250,5 +265,33 @@ public class Modeling {
             return false;
         }
         return false;
+    }
+
+    public void contactsTypesSetCost() {
+        for (Contract contract : contracts) {
+            if (contract.getType() == ContractType.HOME) {
+                double cost = (contract.getSaleOfContract() * contract.getTerms().getPeriod(nowMouth)) / contract.getTerms().getMaxSummConpens();
+                costHome += cost;
+            } else if (contract.getType() == ContractType.TRANSPORT) {
+                double cost = (contract.getSaleOfContract() * contract.getTerms().getPeriod(nowMouth)) / contract.getTerms().getMaxSummConpens();
+                costCar += cost;
+            } else if (contract.getType() == ContractType.HEALHCARE) {
+                double cost = (contract.getSaleOfContract() * contract.getTerms().getPeriod(nowMouth)) / contract.getTerms().getMaxSummConpens();
+                costHp += cost;
+            }
+        }
+    }
+
+    public void refreshDemand() {
+        contactsTypesSetCost();
+        if (cntHome != 0) {
+            demandHome = (int) costHome / cntHome;
+        }
+        if (cntTransport != 0) {
+            demandTransport = (int) costCar / cntTransport;
+        }
+        if (cntHeal != 0) {
+            demandHeal = (int) costHp / cntHeal;
+        }
     }
 }
