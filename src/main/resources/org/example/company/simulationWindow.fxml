@@ -32,13 +32,13 @@
             <Font size="21.0" />
          </font>
       </Label>
-      <TableView layoutX="66.0" layoutY="165.0" prefHeight="200.0" prefWidth="495.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
+      <TableView fx:id="tableView" layoutX="66.0" layoutY="165.0" prefHeight="200.0" prefWidth="495.0">
+         <columns>
+            <TableColumn fx:id="operationColumn" prefWidth="142.0" text="Тип операции" />
+            <TableColumn fx:id="contractInfoColumn" prefWidth="215.0" text="Информация о договоре" />
+            <TableColumn fx:id="amountColumn" prefWidth="137.0" text="Сумма" />
+         </columns>
       </TableView>
-      <Label layoutX="144.0" layoutY="107.0" text="ПРОДОЛЖЕНИЕ БУДЕТ ПРИ ОКОНЧАНИИ МЕСЯЦА" textFill="#f21d1d" />
       <Button layoutX="44.0" layoutY="394.0" mnemonicParsing="false" onAction="#startSimulation" text="Запустить симуляцию" />
       <Button layoutX="391.0" layoutY="394.0" mnemonicParsing="false" onAction="#stopSimulation" text="Остановить симуляцию" />
    </children>

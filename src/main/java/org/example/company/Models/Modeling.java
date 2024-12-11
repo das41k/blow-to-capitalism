@@ -1,6 +1,7 @@
 package org.example.company.Models;
 
-import javax.xml.crypto.Data;
+import org.example.company.SimulationWindowController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +44,8 @@ public class Modeling {
     public ArrayList<Contract> contracts = new ArrayList<>();
     public HashMap<Contract, ContractType> contractsMap = new HashMap<>();
 
+    private SimulationWindowController simulationWindowController;
+
     public double getCapital() {
         return capital;
     }
@@ -56,6 +59,7 @@ public class Modeling {
         System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + type + " оканчивается в  " + contract.getTerms().getMouthOfEnd() + " месяце");
         saleContact(contract);
         System.out.println("Контракт с ID: " + contract.getNumber() + " был оплачен в этом месяце");
+        givenDataTable("sale", contract, contract.getSaleOfContract());
     }
     public void setCntMouth(int mouth, int nowMouth) {
         this.cntMouth = mouth;
@@ -130,9 +134,11 @@ public class Modeling {
                 if (contract.getTerms().getMouthOfEnd() > nowMouth) {
                     saleContact(contract);
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " был оплачен в этом месяце");
+                    givenDataTable("sale", contract, contract.getSaleOfContract());
                 } else if (contract.getTerms().getMouthOfEnd() <= nowMouth) {
                     saleContact(contract);
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
+                    givenDataTable("sale", contract, contract.getSaleOfContract());
                     iterator.remove();
                     contractsMap.remove(contract);
                 }
@@ -141,9 +147,11 @@ public class Modeling {
                 if (contract.getTerms().getMouthOfEnd() > nowMouth && nowMouth % 3 == 0) {
                     saleContact(contract);
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " был оплачен в этом месяце");
+                    givenDataTable("sale", contract, contract.getSaleOfContract());
                 } else if (contract.getTerms().getMouthOfEnd() <= nowMouth) {
                     saleContact(contract);
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
+                    givenDataTable("sale", contract, contract.getSaleOfContract());
                     iterator.remove();
                     contractsMap.remove(contract);
                 }
@@ -152,9 +160,11 @@ public class Modeling {
                 if (contract.getTerms().getMouthOfEnd() > nowMouth && nowMouth % 12 == 0) {
                     saleContact(contract);
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " был оплачен в этом месяце");
+                    givenDataTable("sale", contract,contract.getSaleOfContract());
                 } else if (contract.getTerms().getMouthOfEnd() <= nowMouth) {
                     saleContact(contract);
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
+                    givenDataTable("sale", contract,contract.getSaleOfContract());
                     iterator.remove();
                     contractsMap.remove(contract);
                 }
@@ -193,7 +203,19 @@ public class Modeling {
             if (contract.getTerms().getFranchise() <= payment) {
                 capital -= payment;
                 System.out.println("Компания оплатила ущерб по договору: " + contract.getNumber() + " на сумму " + payment);
+                givenDataTable("payment", contract,payment);
             }
+        }
+    }
+
+
+    public void setSimulationWindowController(SimulationWindowController controller) {
+        this.simulationWindowController = controller;
+    }
+
+    private void givenDataTable(String operation, Contract contract, double sum) {
+        if (simulationWindowController != null) {
+            simulationWindowController.addDataTable(operation, contract, sum);
         }
     }
 

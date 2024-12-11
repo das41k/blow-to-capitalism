@@ -4,15 +4,17 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.example.company.Models.ContractType;
-import org.example.company.Models.Modeling;
-import org.example.company.Models.TermsOfContract;
+import org.example.company.Models.*;
 
 public class SimulationWindowController {
     @FXML
@@ -21,6 +23,15 @@ public class SimulationWindowController {
     private Label nowMonth = new Label();
     @FXML
     private Label timeSimulation;
+    @FXML
+    private TableView<RowData> tableView;
+    @FXML
+    private TableColumn<RowData, String> operationColumn;
+    @FXML
+    private TableColumn<RowData, String> contractInfoColumn;
+    @FXML
+    private TableColumn<RowData, Double> amountColumn;
+    private ObservableList<RowData> data = FXCollections.observableArrayList();
 
     private TermsOfContract termsHome;
     private TermsOfContract termsCar;
@@ -34,8 +45,18 @@ public class SimulationWindowController {
     private int periodHappen = 10;
     private AnimationTimer timer;
     private final int period = 5;
+
+    private SimulationWindowController simulationWindowController;
+
+
     public void initialize() {
         timeSimulation.setText("Время симуляции: " + "00:00:00");
+        data.clear();
+        operationColumn.setCellValueFactory(cellData -> cellData.getValue().operationProperty());
+        contractInfoColumn.setCellValueFactory(cellData -> cellData.getValue().contractInfoProperty());
+        amountColumn.setCellValueFactory(cellData -> cellData.getValue().amountProperty().asObject());
+
+        tableView.setItems(data);
     }
 
     public void countedData(double capitalData, int month, Modeling model, TermsOfContract termsHome, TermsOfContract termsCar, TermsOfContract termsHp) {
@@ -45,6 +66,7 @@ public class SimulationWindowController {
         this.termsHome = termsHome;
         this.termsCar = termsCar;
         this.termsHp = termsHp;
+        model.setSimulationWindowController(this);
     }
     private void SimulationTime() {
         long hours = (elapsedTime / 3600);
@@ -126,7 +148,7 @@ public class SimulationWindowController {
                 timer.start();
                 isSimulationRunning = true;
             }
-            if (elapsedTime == 20)  {
+            if (elapsedTime == 60)  {
                 elapsedTime = 0;
                 isSimulationRunning = false;
                 simulationTimer.stop();
@@ -197,6 +219,14 @@ public class SimulationWindowController {
             termsHome.setMouthRegister(mouth);
             termsCar.setMouthRegister(mouth);
             termsHp.setMouthRegister(mouth);
+        }
+    }
+
+    public void addDataTable(String operation, Contract contract, double sum) {
+        if (operation.equals("sale")) {
+            data.add(new RowData("Продажа", "ID договора: " + contract.getNumber() + " Тип договора: " + contract.getType()  + "\nЗаканчивается в " + contract.getTerms().getMouthOfEnd() + " месяце", sum));
+        } else {
+            data.add(new RowData("Выплата страховки", "ID договора: " + contract.getNumber(), sum));
         }
     }
 }

@@ -10,10 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.company.Models.ContractType;
-import org.example.company.Models.ContributionType;
-import org.example.company.Models.Modeling;
-import org.example.company.Models.TermsOfContract;
+import org.example.company.Models.*;
 
 import java.io.IOException;
 
@@ -70,6 +67,8 @@ public class HelloController {
     private ComboBox<ContributionType> typeContribCar;
     @FXML
     private ComboBox<ContributionType> typeContribHp;
+    @FXML
+    private TableView<RowData> tableView;
 
     private TermsOfContract termsHome;
     private TermsOfContract termsCar;
