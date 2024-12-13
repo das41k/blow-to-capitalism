@@ -109,28 +109,31 @@ public class SimulationWindowController {
             public void handle(long now) {
                 if (now - lastUpdateHome >= period * 1_000_000_000L) {
                     if (Math.random() <= pHome && cntClientHome < model.getDemandHome()) {
-                        model.addContact(ContractType.HOME, termsHome);
+                        Contract contract = new ContractHome();
+                        model.addContact(contract, termsHome);
                         capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                         cntClientHome++;
-                        model.updateDemand(ContractType.HOME);
+                        model.updateDemand(contract);
                     }
                     lastUpdateHome = now;
                 }
                 if (now - lastUpdateCar >= period * 1_000_000_000L) {
                     if (Math.random() <= pCar && cntClientCar < model.getDemandTransport()) {
-                        model.addContact(ContractType.TRANSPORT, termsCar);
+                        Contract contract = new ContractCar();
+                        model.addContact(contract, termsCar);
                         capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                         cntClientCar++;
-                        model.updateDemand(ContractType.TRANSPORT);
+                        model.updateDemand(contract);
                     }
                     lastUpdateCar = now;
                 }
                 if (now - lastUpdateHp >= period * 1_000_000_000L) {
                     if (Math.random() <= pHeal && cntClientHp < model.getDemandHeal()) {
-                        model.addContact(ContractType.HEALHCARE, termsHp);
+                        Contract contract = new ContractHeal();
+                        model.addContact(contract, termsHp);
                         capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                         cntClientHp++;
-                        model.updateDemand(ContractType.HEALHCARE);
+                        model.updateDemand(contract);
                     }
                     lastUpdateHp = now;
                 }
@@ -165,7 +168,7 @@ public class SimulationWindowController {
                 timer.start();
                 isSimulationRunning = true;
             }
-            if (elapsedTime == 60)  {
+            if (elapsedTime == 20)  {
                 elapsedTime = 0;
                 isSimulationRunning = false;
                 simulationTimer.stop();
@@ -242,7 +245,7 @@ public class SimulationWindowController {
 
     public void addDataTable(String operation, Contract contract, double sum) {
         if (operation.equals("sale")) {
-            data.add(new RowData("Продажа", "ID договора: " + contract.getNumber() + " Тип договора: " + contract.getType()  + "\nЗаканчивается в " + contract.getTerms().getMouthOfEnd() + " месяце" + "\nТип оплаты: " + contract.getTerms().getType(), roundToThreeDecimalPlaces(sum)));
+            data.add(new RowData("Продажа", "ID договора: " + contract.getNumber() + " Тип договора: " + contract.getClass().getSimpleName()  + "\nЗаканчивается в " + contract.getTerms().getMouthOfEnd() + " месяце" + "\nТип оплаты: " + contract.getTerms().getType(), roundToThreeDecimalPlaces(sum)));
         } else {
             data.add(new RowData("Выплата страховки", "ID договора: " + contract.getNumber(), roundToThreeDecimalPlaces(sum)));
         }

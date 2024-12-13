@@ -1,32 +1,28 @@
 package org.example.company.Models;
 
-public class Contract {
+public abstract class Contract {
     private static int numbers = 0;
     private final int number;
     private TermsOfContract terms;
     private double saleOfContract;
-    private ContractType type;
 
-    public Contract(ContractType type) {
-        this.type = type;
+    public Contract() {
         this.number = ++numbers;
-    }
-    public ContractType getType() {
-        return type;
     }
 
     public TermsOfContract getTerms() {
         return terms;
     }
 
+    public abstract void setSaleOfContract();
+    public abstract  void generateData();
+
+    public void setSale(double saleOfContract) {
+        this.saleOfContract = saleOfContract;
+    }
     public void setTerms(TermsOfContract terms) {
         this.terms = terms;
     }
-
-    public void setSaleOfContract(double sale) {
-        this.saleOfContract = sale;
-    }
-
     public double getSaleOfContract() {
         return saleOfContract;
     }

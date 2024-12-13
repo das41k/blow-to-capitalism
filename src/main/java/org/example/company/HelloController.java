@@ -130,7 +130,6 @@ public class HelloController {
         model.genetateDataHappen();
         model.setDemand(demandHome.getValue(), demandCar.getValue(),demandHp.getValue());
         model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
-        model.setSaleOfContracts(saleContractHome.getValue(),saleContractCar.getValue(),saleContractHp.getValue());
     }
 
     public static double roundToThreeDecimalPlaces(double number) {

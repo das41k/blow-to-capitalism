@@ -33,16 +33,12 @@ public class Modeling {
     private double costCar;
     private  double costHp;
 
-    private double saleOfHome;
-    private double saleOfTransport;
-    private double saleOfHeal;
 
     private boolean isRedefiningHome = false;
     private boolean isRedefiningTransport = false;
     private boolean isRedefiningHeal = false;
 
     public ArrayList<Contract> contracts = new ArrayList<>();
-    public HashMap<Contract, ContractType> contractsMap = new HashMap<>();
 
     private SimulationWindowController simulationWindowController;
 
@@ -50,13 +46,11 @@ public class Modeling {
         return capital;
     }
 
-    public void addContact(ContractType type, TermsOfContract terms) {
-        Contract contract = new Contract(type);
+    public void addContact(Contract contract, TermsOfContract terms) {
         TermsOfContract newTerms = new TermsOfContract(terms);
         contract.setTerms(newTerms);
         contracts.add(contract);
-        contractsMap.put(contract,type);
-        System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + type + " оканчивается в  " + contract.getTerms().getMouthOfEnd() + " месяце");
+        System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + contract.getClass().getSimpleName() + " оканчивается в  " + contract.getTerms().getMouthOfEnd() + " месяце");
         saleContact(contract);
         System.out.println("Контракт с ID: " + contract.getNumber() + " был оплачен в этом месяце");
         givenDataTable("sale", contract, contract.getSaleOfContract());
@@ -87,10 +81,10 @@ public class Modeling {
         this.demandHeal = demandHeal;
     }
 
-    public void updateDemand(ContractType type) {
-        if (type == ContractType.HOME) demandHome--;
-        else if (type == ContractType.TRANSPORT) demandTransport--;
-        else if (type == ContractType.HEALHCARE) demandHeal--;
+    public void updateDemand(Contract contract) { //
+        if (contract instanceof ContractHome) demandHome--;
+        else if (contract instanceof ContractCar) demandTransport--;
+        else if (contract instanceof ContractHeal) demandHeal--;
     }
 
     public int getDemandHome() {
@@ -105,11 +99,6 @@ public class Modeling {
         return demandHeal;
     }
 
-    public void setSaleOfContracts(double saleOfHome, double saleOfTransport, double saleOfHeal) {
-        this.saleOfHome = saleOfHome;
-        this.saleOfTransport = saleOfTransport;
-        this.saleOfHeal = saleOfHeal;
-    }
     public void setP(double pHome, double pCar, double pHeal) {
         this.pHappenHome = pHome;
         this.pHappenTransport = pCar;
@@ -146,7 +135,6 @@ public class Modeling {
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
                     givenDataTable("sale", contract, contract.getSaleOfContract());
                     iterator.remove();
-                    contractsMap.remove(contract);
                 }
             }
             else if (contract.getTerms().getType() == ContributionType.QUARTERLY) {
@@ -159,7 +147,6 @@ public class Modeling {
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
                     givenDataTable("sale", contract, contract.getSaleOfContract());
                     iterator.remove();
-                    contractsMap.remove(contract);
                 }
             }
             else if (contract.getTerms().getType() == ContributionType.YEAR) {
@@ -172,7 +159,6 @@ public class Modeling {
                     System.out.println("Контракт с ID: " + contract.getNumber() + " тип оплаты " + contract.getTerms().getType() + " полностью выплачен");
                     givenDataTable("sale", contract,contract.getSaleOfContract());
                     iterator.remove();
-                    contractsMap.remove(contract);
                 }
             }
         }
@@ -180,18 +166,7 @@ public class Modeling {
 
     private void saleContact(Contract contract) {        // Каждый месяц, год и 3 месяца
         double summ;
-        if (contract.getType() == ContractType.HOME) {
-            contract.setSaleOfContract(saleOfHome);
-            summ = saleOfHome;
-        } else if (contract.getType() == ContractType.TRANSPORT) {
-            contract.setSaleOfContract(saleOfTransport);
-            summ = saleOfTransport;
-        } else if (contract.getType() == ContractType.HEALHCARE) {
-            contract.setSaleOfContract(saleOfHeal);
-            summ = saleOfHeal;
-        } else {
-            return;
-        }
+        summ = contract.getSaleOfContract();
         capital +=  summ;
     }
     public void paymentContracts() {
@@ -254,38 +229,37 @@ public class Modeling {
         cntHappenTransport = (int) (Math.random() * 25) + 1;
         cntHappenHeal = (int) (Math.random() * 25) + 1;
     }
-    public void updateCntContractTypes() {
-        for (Contract key : contractsMap.keySet()) {
-            if (contractsMap.get(key) == ContractType.HOME) {
+    public void updateCntContractTypes() { //
+        for (Contract contract : contracts) {
+            if (contract instanceof ContractHome) {
                 cntHome++;
-            } else if (contractsMap.get(key) == ContractType.TRANSPORT) {
+            } else if (contract instanceof  ContractCar) {
                 cntTransport++;
-            } else if (contractsMap.get(key) == ContractType.HEALHCARE) {
+            } else if (contract instanceof  ContractHeal) {
                 cntHeal++;
             }
         }
     }
     public void deleteContracts(Contract contract) {
         contracts.remove(contract);
-        contractsMap.remove(contract);
     }
 
-    public boolean isHappen(Contract contract) {
-        if (contract.getType() == ContractType.HOME) {
+    public boolean isHappen(Contract contract) { //
+        if (contract instanceof ContractHome) {
             if (Math.random() <= pHappenHome && cntHappenHome > 0) {
                 cntHappenHome--;
                 return true;
             }
             return false;
         }
-        else if (contract.getType() == ContractType.TRANSPORT) {
+        else if (contract instanceof ContractCar) {
             if (Math.random() <= pHappenTransport && cntHappenTransport > 0) {
                 cntHappenTransport--;
                 return true;
             }
             return false;
         }
-        else if (contract.getType() == ContractType.HEALHCARE) {
+        else if (contract instanceof  ContractHeal) {
             if (Math.random() <= pHappenHeal && cntHappenHeal > 0) {
                 cntHappenHeal--;
                 return true;
@@ -295,15 +269,15 @@ public class Modeling {
         return false;
     }
 
-    public void contactsTypesSetCost() {
+    public void contactsTypesSetCost() { //
         for (Contract contract : contracts) {
-            if (contract.getType() == ContractType.HOME) {
+            if (contract instanceof ContractHome) {
                 double cost = (contract.getSaleOfContract() * contract.getTerms().getPeriod(nowMouth)) / contract.getTerms().getMaxSummConpens();
                 costHome += cost;
-            } else if (contract.getType() == ContractType.TRANSPORT) {
+            } else if (contract instanceof ContractCar) {
                 double cost = (contract.getSaleOfContract() * contract.getTerms().getPeriod(nowMouth)) / contract.getTerms().getMaxSummConpens();
                 costCar += cost;
-            } else if (contract.getType() == ContractType.HEALHCARE) {
+            } else if (contract instanceof ContractHeal) {
                 double cost = (contract.getSaleOfContract() * contract.getTerms().getPeriod(nowMouth)) / contract.getTerms().getMaxSummConpens();
                 costHp += cost;
             }
