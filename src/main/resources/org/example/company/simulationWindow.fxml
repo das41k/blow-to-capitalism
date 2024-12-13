@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="449.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.company.SimulationWindowController">
+<AnchorPane prefHeight="527.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.company.SimulationWindowController">
    <children>
       <Label layoutX="71.0" layoutY="27.0" text="Текущий капитал">
          <font>
@@ -27,19 +27,25 @@
          </font>
       </Label>
       <Label fx:id="timeSimulation" layoutX="420.0" layoutY="58.0" text="время" />
-      <Label layoutX="219.0" layoutY="124.0" text="Оказанные услуги">
+      <Label layoutX="217.0" layoutY="181.0" text="Оказанные услуги">
          <font>
             <Font size="21.0" />
          </font>
       </Label>
-      <TableView fx:id="tableView" layoutX="66.0" layoutY="165.0" prefHeight="200.0" prefWidth="495.0">
+      <TableView fx:id="tableView" layoutX="64.0" layoutY="222.0" prefHeight="200.0" prefWidth="495.0">
          <columns>
             <TableColumn fx:id="operationColumn" prefWidth="142.0" text="Тип операции" />
             <TableColumn fx:id="contractInfoColumn" prefWidth="215.0" text="Информация о договоре" />
             <TableColumn fx:id="amountColumn" prefWidth="137.0" text="Сумма" />
          </columns>
       </TableView>
-      <Button layoutX="44.0" layoutY="394.0" mnemonicParsing="false" onAction="#startSimulation" text="Запустить симуляцию" />
-      <Button layoutX="391.0" layoutY="394.0" mnemonicParsing="false" onAction="#stopSimulation" text="Остановить симуляцию" />
+      <Button layoutX="42.0" layoutY="451.0" mnemonicParsing="false" onAction="#startSimulation" text="Запустить симуляцию" />
+      <Button layoutX="389.0" layoutY="451.0" mnemonicParsing="false" onAction="#stopSimulation" text="Остановить симуляцию" />
+      <Label layoutX="14.0" layoutY="116.0" text="Спрос на жилье" />
+      <Label fx:id="demandHome" layoutX="159.0" layoutY="116.0" text="а" />
+      <Label layoutX="14.0" layoutY="136.0" text="Спрос на транспорт" />
+      <Label fx:id="demandCar" layoutX="159.0" layoutY="136.0" text="б" />
+      <Label layoutX="17.0" layoutY="158.0" text="Спрос на здоровье" />
+      <Label fx:id="demandHeal" layoutX="160.0" layoutY="158.0" text="в" />
    </children>
 </AnchorPane>

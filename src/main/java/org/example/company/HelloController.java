@@ -88,9 +88,9 @@ public class HelloController {
         pHome.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1,0.9, 0.5, 0.1));
         pCar.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1,0.9, 0.4, 0.1));
         pHeal.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1,0.9, 0.7, 0.1));
-        conpensHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1000, 7000, 5000, 100));
-        conpensCar.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1000, 4000, 3000, 100));
-        conpensHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 2500, 1000, 100));
+        conpensHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(10000, 30000, 15000, 250));
+        conpensCar.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(25000, 60000, 30000, 500));
+        conpensHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(7000, 25000, 10000, 250));
         franchiseHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 2000, 1000, 100));
         franchiseCar.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 3000, 2500, 100));
         franchiseHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 1000, 650, 100));
@@ -103,9 +103,9 @@ public class HelloController {
         typeContribHome.setValue(ContributionType.MOUNTH);
         typeContribCar.setValue(ContributionType.MOUNTH);
         typeContribHp.setValue(ContributionType.MOUNTH);
-        saleContractHome.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(100, 10000, 300, 100));
-        saleContractCar.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(100, 15000, 500, 100));
-        saleContractHp.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(100, 7000, 100, 50));
+        saleContractHome.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(3000, 20000, 10000, 250));
+        saleContractCar.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(7000, 50000, 25000, 250));
+        saleContractHp.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(2000, 10000, 5000, 250));
     }
     private void setDisable(boolean flag) {
         countMounth.setDisable(flag);
@@ -115,7 +115,7 @@ public class HelloController {
         accordionItemHp.setDisable(flag);
     }
     public void updateData(double capital, boolean isRedefiningHome, boolean isRedefiningCar, boolean isRedefiningHp, int demandHome, int demandCar, int demandHp) {
-        startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,capital, 100));
+        startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,roundToThreeDecimalPlaces(capital), 100));
         accordionItemHome.setDisable(!isRedefiningHome);
         accordionItemCar.setDisable(!isRedefiningCar);
         accordionItemHp.setDisable(!isRedefiningHp);
@@ -131,6 +131,11 @@ public class HelloController {
         model.setDemand(demandHome.getValue(), demandCar.getValue(),demandHp.getValue());
         model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
         model.setSaleOfContracts(saleContractHome.getValue(),saleContractCar.getValue(),saleContractHp.getValue());
+    }
+
+    public static double roundToThreeDecimalPlaces(double number) {
+        double factor = Math.pow(10, 3);
+        return Math.round(number * factor) / factor;
     }
 
     public void startWorkCompany(ActionEvent actionEvent) throws IOException { // запретить менять поля
@@ -155,7 +160,6 @@ public class HelloController {
         stage.show();
         ((Stage)((Node)actionEvent.getSource()).getScene().getWindow()).hide();
     }
-
     public void setTermsOfContracts() {
         termsHome = new TermsOfContract(conpensHome.getValue(), periodHome.getValue(),nowMonth, franchiseHome.getValue(),typeContribHome.getValue());
         termsCar = new TermsOfContract(conpensCar.getValue(), periodCar.getValue(),nowMonth, franchiseCar.getValue(),typeContribCar.getValue());

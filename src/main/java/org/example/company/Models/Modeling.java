@@ -87,6 +87,12 @@ public class Modeling {
         this.demandHeal = demandHeal;
     }
 
+    public void updateDemand(ContractType type) {
+        if (type == ContractType.HOME) demandHome--;
+        else if (type == ContractType.TRANSPORT) demandTransport--;
+        else if (type == ContractType.HEALHCARE) demandHeal--;
+    }
+
     public int getDemandHome() {
         return demandHome;
     }

@@ -32,6 +32,12 @@ public class SimulationWindowController {
     @FXML
     private TableColumn<RowData, Double> amountColumn;
     private ObservableList<RowData> data = FXCollections.observableArrayList();
+    @FXML
+    private Label demandHome;
+    @FXML
+    private Label demandCar;
+    @FXML
+    private Label demandHeal;
 
     private TermsOfContract termsHome;
     private TermsOfContract termsCar;
@@ -55,8 +61,13 @@ public class SimulationWindowController {
         operationColumn.setCellValueFactory(cellData -> cellData.getValue().operationProperty());
         contractInfoColumn.setCellValueFactory(cellData -> cellData.getValue().contractInfoProperty());
         amountColumn.setCellValueFactory(cellData -> cellData.getValue().amountProperty().asObject());
-
         tableView.setItems(data);
+    }
+
+    private void setDemandWindow() {
+        demandHome.setText(String.valueOf(model.getDemandHome()));
+        demandCar.setText(String.valueOf(model.getDemandTransport()));
+        demandHeal.setText(String.valueOf(model.getDemandHeal()));
     }
 
     public void countedData(double capitalData, int month, Modeling model, TermsOfContract termsHome, TermsOfContract termsCar, TermsOfContract termsHp) {
@@ -67,6 +78,7 @@ public class SimulationWindowController {
         this.termsCar = termsCar;
         this.termsHp = termsHp;
         model.setSimulationWindowController(this);
+        setDemandWindow();
     }
     private void SimulationTime() {
         long hours = (elapsedTime / 3600);
@@ -74,13 +86,15 @@ public class SimulationWindowController {
         long seconds = (elapsedTime % 60);
         String timeText = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         timeSimulation.setText("Время симуляции: " + timeText);
+        setDemandWindow();
     }
 
     @FXML
     private void startSimulation() {
         if (isSimulationRunning) return;
+        data.clear();
         if (flagMonth) model.saleOfMonth();
-        capital.setText(String.valueOf(model.getCapital()));
+        capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
         timer = new AnimationTimer() {
             private long lastUpdateHome= 0;
             private long lastUpdateCar = 0;
@@ -96,24 +110,27 @@ public class SimulationWindowController {
                 if (now - lastUpdateHome >= period * 1_000_000_000L) {
                     if (Math.random() <= pHome && cntClientHome < model.getDemandHome()) {
                         model.addContact(ContractType.HOME, termsHome);
-                        capital.setText(String.valueOf(model.getCapital()));
+                        capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                         cntClientHome++;
+                        model.updateDemand(ContractType.HOME);
                     }
                     lastUpdateHome = now;
                 }
                 if (now - lastUpdateCar >= period * 1_000_000_000L) {
                     if (Math.random() <= pCar && cntClientCar < model.getDemandTransport()) {
                         model.addContact(ContractType.TRANSPORT, termsCar);
-                        capital.setText(String.valueOf(model.getCapital()));
+                        capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                         cntClientCar++;
+                        model.updateDemand(ContractType.TRANSPORT);
                     }
                     lastUpdateCar = now;
                 }
                 if (now - lastUpdateHp >= period * 1_000_000_000L) {
                     if (Math.random() <= pHeal && cntClientHp < model.getDemandHeal()) {
                         model.addContact(ContractType.HEALHCARE, termsHp);
-                        capital.setText(String.valueOf(model.getCapital()));
+                        capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                         cntClientHp++;
+                        model.updateDemand(ContractType.HEALHCARE);
                     }
                     lastUpdateHp = now;
                 }
@@ -144,7 +161,7 @@ public class SimulationWindowController {
                 timer.stop();
                 isSimulationRunning = false;
                 model.paymentContracts();
-                capital.setText(String.valueOf(model.getCapital()));
+                capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                 timer.start();
                 isSimulationRunning = true;
             }
@@ -155,7 +172,7 @@ public class SimulationWindowController {
                 timer.stop();
                 simulationTimer = null;
                 model.paymentToState();
-                capital.setText(String.valueOf(model.getCapital()));
+                capital.setText(String.valueOf(roundToThreeDecimalPlaces(model.getCapital())));
                 model.updateCntContractTypes();
                 model.redefiningUpdate();
                 resultSimulation();
@@ -193,6 +210,7 @@ public class SimulationWindowController {
             return;
         }
         model.refreshDemand();
+        setDemandWindow();
         if (model.isRedefiningHome() || model.isRedefiningHeal() || model.isRedefiningTransport()
                 || model.getDemandHeal() == 0 || model.getDemandHome() == 0 || model.getDemandTransport() == 0 ) {
             Stage stage = (Stage) capital.getScene().getWindow();
@@ -224,9 +242,14 @@ public class SimulationWindowController {
 
     public void addDataTable(String operation, Contract contract, double sum) {
         if (operation.equals("sale")) {
-            data.add(new RowData("Продажа", "ID договора: " + contract.getNumber() + " Тип договора: " + contract.getType()  + "\nЗаканчивается в " + contract.getTerms().getMouthOfEnd() + " месяце", sum));
+            data.add(new RowData("Продажа", "ID договора: " + contract.getNumber() + " Тип договора: " + contract.getType()  + "\nЗаканчивается в " + contract.getTerms().getMouthOfEnd() + " месяце" + "\nТип оплаты: " + contract.getTerms().getType(), roundToThreeDecimalPlaces(sum)));
         } else {
-            data.add(new RowData("Выплата страховки", "ID договора: " + contract.getNumber(), sum));
+            data.add(new RowData("Выплата страховки", "ID договора: " + contract.getNumber(), roundToThreeDecimalPlaces(sum)));
         }
+    }
+
+    public static double roundToThreeDecimalPlaces(double number) {
+        double factor = Math.pow(10, 3);
+        return Math.round(number * factor) / factor;
     }
 }
