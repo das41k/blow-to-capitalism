@@ -5,10 +5,12 @@ import org.example.company.SimulationWindowController;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class Modeling {
     private double capital;
     private double startCapital;
+    private double income;
 
     private int demandHome;
     private int demandTransport;
@@ -40,21 +42,66 @@ public class Modeling {
 
     public ArrayList<Contract> contracts = new ArrayList<>();
 
+    private Map<String,Integer> cntSales = new HashMap<>();
+    private Map<String,Integer> cntPayment = new HashMap<>();
+
     private SimulationWindowController simulationWindowController;
 
     public double getCapital() {
         return capital;
     }
 
+    public void initMapCntSales() {
+        cntSales.put("Жилье:", 0);
+        cntSales.put("Авто:", 0);
+        cntSales.put("Здоровье:", 0);
+    }
+
+    public void initMapCntPayment() {
+        cntPayment.put("Жилье:", 0);
+        cntPayment.put("Авто:", 0);
+        cntPayment.put("Здоровье:", 0);
+    }
+
+    public double getIncome() {
+        return capital - startCapital;
+    }
+
+    public Map<String, Integer> getCntSales() {
+        return cntSales;
+    }
+
+    public Map<String, Integer> getCntPayment() {
+        return cntPayment;
+    }
+
     public void addContact(Contract contract, TermsOfContract terms) {
         TermsOfContract newTerms = new TermsOfContract(terms);
         contract.setTerms(newTerms);
         contracts.add(contract);
+        switch (contract) {
+            case ContractHome contractHome -> updateCntSales("Жилье:");
+            case ContractCar contractCar -> updateCntSales("Авто:");
+            case ContractHeal contractHeal -> updateCntSales("Здоровье:");
+            default -> {
+            }
+        }
         System.out.println("Добавлен контракт с ID: " + contract.getNumber() + " с типом: " + contract.getClass().getSimpleName() + " оканчивается в  " + contract.getTerms().getMouthOfEnd() + " месяце");
         saleContact(contract);
         System.out.println("Контракт с ID: " + contract.getNumber() + " был оплачен в этом месяце");
         givenDataTable("sale", contract, contract.getSaleOfContract());
     }
+
+    private void updateCntSales(String key) {
+        int currentValue = cntSales.get(key);
+        cntSales.put(key,currentValue + 1);
+    }
+
+    private void updateCntPayment(String key) {
+        int currentValue = cntPayment.get(key);
+        cntPayment.put(key,currentValue + 1);
+    }
+
     public void setCntMouth(int mouth, int nowMouth) {
         this.cntMouth = mouth;
         this.nowMouth = nowMouth;
@@ -183,6 +230,13 @@ public class Modeling {
             double payment = contract.getTerms().getMaxSummConpens() * k;
             if (contract.getTerms().getFranchise() <= payment) {
                 capital -= payment;
+                switch (contract) {
+                    case ContractHome contractHome -> updateCntPayment("Жилье:");
+                    case ContractCar contractCar -> updateCntPayment("Авто:");
+                    case ContractHeal contractHeal -> updateCntPayment("Здоровье:");
+                    default -> {
+                    }
+                }
                 System.out.println("Компания оплатила ущерб по договору: " + contract.getNumber() + " на сумму " + payment);
                 givenDataTable("payment", contract,payment);
             }

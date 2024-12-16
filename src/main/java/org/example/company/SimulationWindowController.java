@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.company.Models.*;
 
+import javax.xml.crypto.Data;
+import java.sql.SQLException;
+
 public class SimulationWindowController {
     @FXML
     private Label capital = new Label();
@@ -48,6 +51,7 @@ public class SimulationWindowController {
     private long elapsedTime = 0;
     private Timeline simulationTimer;
     private Modeling model;
+    private Manager manager;
     private int periodHappen = 10;
     private AnimationTimer timer;
     private final int period = 5;
@@ -70,13 +74,14 @@ public class SimulationWindowController {
         demandHeal.setText(String.valueOf(model.getDemandHeal()));
     }
 
-    public void countedData(double capitalData, int month, Modeling model, TermsOfContract termsHome, TermsOfContract termsCar, TermsOfContract termsHp) {
+    public void countedData(double capitalData, int month, Modeling model, TermsOfContract termsHome, TermsOfContract termsCar, TermsOfContract termsHp, Manager manager) {
         capital.setText(String.valueOf(capitalData));
         nowMonth.setText(String.valueOf(month));
         this.model = model;
         this.termsHome = termsHome;
         this.termsCar = termsCar;
         this.termsHp = termsHp;
+        this.manager = manager;
         model.setSimulationWindowController(this);
         setDemandWindow();
     }
@@ -190,12 +195,20 @@ public class SimulationWindowController {
         alertResults.setHeaderText("Результаты симуляции");
         alertResults.setContentText("Выплата государству составила: " + paymentToState +"\n" + "Текущий капитал: " + capital.getText());
         alertResults.setOnCloseRequest(event -> {
-            continuationWork();
+            try {
+                continuationWork();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         });
         alertResults.show();
     }
 
-    private void stopWorkProgram(String reason) {
+    private void stopWorkProgram(String reason) throws SQLException, ClassNotFoundException {
+        manager.setStatistic(model.getIncome(),model.getCntSales(), model.getCntPayment());
+        DatabaseManageres.insertOrUpdateManager(manager.getId(), manager.getAuthData(), manager.getStatistic());
         Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
         alertResults.setHeaderText("Компания завершила работу!");
         alertResults.setContentText("Причина: " + reason);
@@ -206,7 +219,7 @@ public class SimulationWindowController {
         alertResults.showAndWait();
     }
 
-    private void continuationWork() {
+    private void continuationWork() throws SQLException, ClassNotFoundException {
         if (model.getNowMouth() == model.getCntMouth()) {
             String reason = "закончился срок работы, были отработаны все месяцы!";
             stopWorkProgram(reason);

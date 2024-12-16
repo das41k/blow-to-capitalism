@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import org.example.company.Models.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class HelloController {
     @FXML
@@ -56,12 +58,6 @@ public class HelloController {
     @FXML
     private Spinner<Integer> periodHp;
     @FXML
-    private Spinner<Double> saleContractHome;
-    @FXML
-    private Spinner<Double> saleContractCar;
-    @FXML
-    private Spinner<Double> saleContractHp;
-    @FXML
     private ComboBox<ContributionType> typeContribHome;
     @FXML
     private ComboBox<ContributionType> typeContribCar;
@@ -69,6 +65,8 @@ public class HelloController {
     private ComboBox<ContributionType> typeContribHp;
     @FXML
     private TableView<RowData> tableView;
+    @FXML
+    private Spinner<Integer> managerID;
 
     private TermsOfContract termsHome;
     private TermsOfContract termsCar;
@@ -77,9 +75,12 @@ public class HelloController {
     private boolean isSimulation = false;
     private Modeling model = new Modeling();
     private int nowMonth = 0;
+    private Manager manager;
+
+    private boolean flagFisrtSimulation = false;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException, ClassNotFoundException {
         countMounth.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2,24,12));
         startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,30000, 100));
         demandHome.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,25,15));
@@ -103,9 +104,9 @@ public class HelloController {
         typeContribHome.setValue(ContributionType.MOUNTH);
         typeContribCar.setValue(ContributionType.MOUNTH);
         typeContribHp.setValue(ContributionType.MOUNTH);
-        saleContractHome.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(3000, 20000, 10000, 250));
-        saleContractCar.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(7000, 50000, 25000, 250));
-        saleContractHp.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(2000, 10000, 5000, 250));
+        managerID.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1));
+        manager = new Manager(managerID.getValue(), LocalDateTime.now());
+        DatabaseManageres.initialize();
     }
     private void setDisable(boolean flag) {
         countMounth.setDisable(flag);
@@ -130,6 +131,11 @@ public class HelloController {
         model.genetateDataHappen();
         model.setDemand(demandHome.getValue(), demandCar.getValue(),demandHp.getValue());
         model.setP(pHome.getValue(),pCar.getValue(),pHeal.getValue());
+        if (!flagFisrtSimulation) {
+            model.initMapCntPayment();
+            model.initMapCntSales();
+            flagFisrtSimulation = true;
+        }
     }
 
     public static double roundToThreeDecimalPlaces(double number) {
@@ -151,7 +157,7 @@ public class HelloController {
         stage.setTitle("Подождите, компания работает!");
         SimulationWindowController controller = loader.getController();
         setTermsOfContracts();
-        controller.countedData(startCapital.getValue(), nowMonth, model, termsHome, termsCar, termsHp);
+        controller.countedData(startCapital.getValue(), nowMonth, model, termsHome, termsCar, termsHp, manager);
         simulationStage.setOnHidden(event -> {
             Stage primaryStage = HelloApplication.getPrimaryStage();
             primaryStage.show(); // Показать главное окно
@@ -163,5 +169,9 @@ public class HelloController {
         termsHome = new TermsOfContract(conpensHome.getValue(), periodHome.getValue(),nowMonth, franchiseHome.getValue(),typeContribHome.getValue());
         termsCar = new TermsOfContract(conpensCar.getValue(), periodCar.getValue(),nowMonth, franchiseCar.getValue(),typeContribCar.getValue());
         termsHp = new TermsOfContract(conpensHp.getValue(), periodHp.getValue(), nowMonth, franchiseHp.getValue(),typeContribHp.getValue());
+    }
+
+    public void printManagerBD(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+        DatabaseManageres.printManagersTable();
     }
 }

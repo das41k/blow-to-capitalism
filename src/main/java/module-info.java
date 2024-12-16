@@ -11,6 +11,7 @@ module org.example.company {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.xml.crypto;
+    requires java.sql;
 
     opens org.example.company to javafx.fxml;
     exports org.example.company;
