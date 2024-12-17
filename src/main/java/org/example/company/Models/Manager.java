@@ -28,11 +28,11 @@ public class Manager {
     public void setStatistic(double income, Map<String, Integer> cntSales, Map<String, Integer> cntPayments) {
         statistic = "Доход компании: " + income + "\nКоличество проданных справок каждого типа:\n";
         for (String key : cntSales.keySet()) {
-            statistic +=  key + " " + cntSales.get(key);
+            statistic +=  key + " " + cntSales.get(key) + " ";
         }
         statistic += "\nКоличество выплат по страховым случаям:\n";
         for (String key : cntPayments.keySet()) {
-            statistic +=  key + " " + cntSales.get(key);
+            statistic +=  key + " " + cntSales.get(key) + " ";
         }
     }
 

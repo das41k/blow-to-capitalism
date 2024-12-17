@@ -105,7 +105,6 @@ public class HelloController {
         typeContribCar.setValue(ContributionType.MOUNTH);
         typeContribHp.setValue(ContributionType.MOUNTH);
         managerID.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1));
-        manager = new Manager(managerID.getValue(), LocalDateTime.now());
         DatabaseManageres.initialize();
     }
     private void setDisable(boolean flag) {
@@ -114,6 +113,7 @@ public class HelloController {
         accordionItemHome.setDisable(flag);
         accordionItemCar.setDisable(flag);
         accordionItemHp.setDisable(flag);
+        managerID.setDisable(flag);
     }
     public void updateData(double capital, boolean isRedefiningHome, boolean isRedefiningCar, boolean isRedefiningHp, int demandHome, int demandCar, int demandHp) {
         startCapital.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10000,100000,roundToThreeDecimalPlaces(capital), 100));
@@ -126,7 +126,6 @@ public class HelloController {
     }
 
     private void CountedData() {
-        model.setStartCapital(startCapital.getValue());
         model.setCntMouth(countMounth.getValue(), nowMonth);
         model.genetateDataHappen();
         model.setDemand(demandHome.getValue(), demandCar.getValue(),demandHp.getValue());
@@ -135,6 +134,8 @@ public class HelloController {
             model.initMapCntPayment();
             model.initMapCntSales();
             flagFisrtSimulation = true;
+            manager = new Manager(managerID.getValue(), LocalDateTime.now());
+            model.setStartCapital(startCapital.getValue());
         }
     }
 

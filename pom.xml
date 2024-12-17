@@ -14,7 +14,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.34</version>
+            <version>8.0.33</version>
         </dependency>
 
         <!-- JavaFX Dependencies -->
@@ -147,7 +147,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.company/org.example.company.HelloApplication</mainClass>
+                            <mainClass>org.example.company.HelloApplication</mainClass>
                         </configuration>
                     </execution>
                 </executions>

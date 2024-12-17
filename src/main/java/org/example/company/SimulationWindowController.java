@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -193,7 +194,7 @@ public class SimulationWindowController {
         String paymentToState = String.valueOf(model.getPaymentToState());
         Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
         alertResults.setHeaderText("Результаты симуляции");
-        alertResults.setContentText("Выплата государству составила: " + paymentToState +"\n" + "Текущий капитал: " + capital.getText());
+        alertResults.setContentText("Выплата государству составила: " + roundToThreeDecimalPlaces(model.getPaymentToState())  +"\n" + "Текущий капитал: " + capital.getText());
         alertResults.setOnCloseRequest(event -> {
             try {
                 continuationWork();
@@ -207,8 +208,9 @@ public class SimulationWindowController {
     }
 
     private void stopWorkProgram(String reason) throws SQLException, ClassNotFoundException {
-        manager.setStatistic(model.getIncome(),model.getCntSales(), model.getCntPayment());
-        DatabaseManageres.insertOrUpdateManager(manager.getId(), manager.getAuthData(), manager.getStatistic());
+        manager.setStatistic(roundToThreeDecimalPlaces(model.getIncome()),model.getCntSales(), model.getCntPayment());
+        if (DatabaseManageres.doesManagerExist(manager.getId())) DatabaseManageres.updateManager(manager.getId(), manager.getAuthData(), manager.getStatistic());
+        else DatabaseManageres.addManager(manager.getId(), manager.getAuthData(), manager.getStatistic());
         Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
         alertResults.setHeaderText("Компания завершила работу!");
         alertResults.setContentText("Причина: " + reason);

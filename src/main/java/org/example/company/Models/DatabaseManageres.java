@@ -47,38 +47,61 @@ public class DatabaseManageres  {
         }
     }
 
-    public static void insertOrUpdateManager(int id, LocalDateTime authData, String statistic) throws ClassNotFoundException, SQLException {
-        String selectSQL = "SELECT * FROM Managers WHERE id = ?";
-        String insertSQL = "INSERT INTO Managers (id, authData, statistic) VALUES (?, ?, ?)";
-        String updateSQL = "UPDATE Managers SET authData = ?, statistic = ? WHERE id = ?";
+    public static boolean doesManagerExist(int id) throws SQLException {
+        String sql = "SELECT 1 FROM Managers WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement selectStatement = connection.prepareStatement(selectSQL);
-             PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
-             PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            selectStatement.setInt(1, id);
-            ResultSet resultSet = selectStatement.executeQuery();
+            preparedStatement.setInt(1, id);
 
-            if (resultSet.next()) {
-                // Менеджер с таким ID уже существует, обновляем его данные
-                updateStatement.setTimestamp(1, java.sql.Timestamp.valueOf(authData));
-                updateStatement.setString(2, statistic);
-                updateStatement.setInt(3, id);
-                updateStatement.executeUpdate();
-                System.out.println("Manager updated successfully.");
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void addManager(int id, LocalDateTime authData, String statistic) throws SQLException {
+        String sql = "INSERT INTO Managers (id, authData, statistic) VALUES (?, ?, ?)";
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, id);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(authData));
+            preparedStatement.setString(3, statistic);
+
+            preparedStatement.executeUpdate();
+            System.out.println("Новый менеджер успешно добавлен!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateManager(int id, LocalDateTime authData, String statistic) throws SQLException {
+        String sql = "UPDATE Managers SET authData = ?, statistic = ? WHERE id = ?";
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(authData));
+            preparedStatement.setString(2, statistic);
+            preparedStatement.setInt(3, id);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Данные менеджера с ID " + id + " успешно обновлены!");
             } else {
-                // Менеджер с таким ID не существует, вставляем нового менеджера
-                insertStatement.setInt(1, id);
-                insertStatement.setTimestamp(2, java.sql.Timestamp.valueOf(authData));
-                insertStatement.setString(3, statistic);
-                insertStatement.executeUpdate();
-                System.out.println("Manager inserted successfully.");
+                System.out.println("Менеджер с ID " + id + " не найден.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
     public static void printManagersTable() throws ClassNotFoundException, SQLException {
         String selectSQL = "SELECT * FROM Managers";
 
