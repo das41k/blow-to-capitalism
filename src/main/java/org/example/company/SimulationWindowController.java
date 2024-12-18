@@ -59,7 +59,6 @@ public class SimulationWindowController {
 
     private SimulationWindowController simulationWindowController;
 
-
     public void initialize() {
         timeSimulation.setText("Время симуляции: " + "00:00:00");
         data.clear();
@@ -86,6 +85,7 @@ public class SimulationWindowController {
         model.setSimulationWindowController(this);
         setDemandWindow();
     }
+
     private void SimulationTime() {
         long hours = (elapsedTime / 3600);
         long minutes = (elapsedTime % 3600) / 60;
@@ -186,10 +186,25 @@ public class SimulationWindowController {
                 model.redefiningUpdate();
                 resultSimulation();
             }
+
+            // Проверка капитала
+            if (model.getCapital() <= 0) {
+                timer.stop();
+                simulationTimer.stop();
+                simulationTimer = null;
+                Platform.runLater(() -> {
+                    try {
+                        stopWorkProgram("Компания обанкротилась!");
+                    } catch (SQLException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
         }));
         simulationTimer.setCycleCount(Timeline.INDEFINITE);
         simulationTimer.play();
     }
+
     private void resultSimulation() {
         String paymentToState = String.valueOf(model.getPaymentToState());
         Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
@@ -208,7 +223,7 @@ public class SimulationWindowController {
     }
 
     private void stopWorkProgram(String reason) throws SQLException, ClassNotFoundException {
-        manager.setStatistic(roundToThreeDecimalPlaces(model.getIncome()),model.getCntSales(), model.getCntPayment());
+        manager.setStatistic(roundToThreeDecimalPlaces(model.getIncome()), model.getCntSales(), model.getCntPayment());
         if (DatabaseManageres.doesManagerExist(manager.getId())) DatabaseManageres.updateManager(manager.getId(), manager.getAuthData(), manager.getStatistic());
         else DatabaseManageres.addManager(manager.getId(), manager.getAuthData(), manager.getStatistic());
         Alert alertResults = new Alert(Alert.AlertType.INFORMATION);

@@ -15,6 +15,7 @@ import org.example.company.Models.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class HelloController {
     @FXML
@@ -173,6 +174,27 @@ public class HelloController {
     }
 
     public void printManagerBD(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
-        DatabaseManageres.printManagersTable();
+        Alert alertResults = new Alert(Alert.AlertType.INFORMATION);
+        alertResults.setHeaderText("Данные о менеджерах!");
+        DatabaseManageres.infoManagersTable();
+        ArrayList<String> data =  DatabaseManageres.getData();
+        StringBuilder strPrint = new StringBuilder();
+        for (String item : data) {
+            strPrint.append(item);
+;        }
+        alertResults.setTitle("База данных менеджеров");
+
+        // Создаем TextArea для отображения данных
+        TextArea textArea = new TextArea(strPrint.toString());
+        textArea.setEditable(false); // Делаем TextArea нередактируемым
+        textArea.setWrapText(true); // Включаем перенос строк
+
+        // Устанавливаем предпочтительные размеры для TextArea
+        textArea.setPrefHeight(400); // Высота
+        textArea.setPrefWidth(600); // Ширина
+
+        // Устанавливаем содержимое Alert
+        alertResults.getDialogPane().setContent(textArea);
+        alertResults.show();
     }
 }

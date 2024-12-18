@@ -1,12 +1,18 @@
 package org.example.company.Models;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class DatabaseManageres  {
     private static final String URL = "jdbc:mysql://localhost:3306/";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/ManagersCompany";
     private static final String USER = "root";
     private static final String PASSWORD = "zx200526";
+    private static ArrayList<String> data = new ArrayList<>();
+
+    public static ArrayList<String> getData() {
+        return data;
+    }
 
     public static void initialize() throws ClassNotFoundException, SQLException {
         // Загрузка драйвера JDBC
@@ -102,7 +108,7 @@ public class DatabaseManageres  {
         }
     }
 
-    public static void printManagersTable() throws ClassNotFoundException, SQLException {
+    public static void infoManagersTable() throws ClassNotFoundException, SQLException {
         String selectSQL = "SELECT * FROM Managers";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
@@ -114,7 +120,7 @@ public class DatabaseManageres  {
                 int id = resultSet.getInt("id");
                 LocalDateTime authData = resultSet.getTimestamp("authData").toLocalDateTime();
                 String statistic = resultSet.getString("statistic");
-                System.out.println("ID: " + id + ", AuthData: " + authData + ", Statistic: " + statistic);
+                data.add("ID: " + id + ", AuthData: " + authData + ", Statistic: " + statistic + "\n\n");
             }
         } catch (SQLException e) {
             e.printStackTrace();
